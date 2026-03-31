@@ -5,10 +5,12 @@ D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\TICKETSAPI.deps.json
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\TICKETSAPI.runtimeconfig.json
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\TICKETSAPI.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\TICKETSAPI.pdb
+D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Dapper.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\EPPlus.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\EPPlus.Interfaces.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\EPPlus.System.Drawing.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Humanizer.dll
+D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll

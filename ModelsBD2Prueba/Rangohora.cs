@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace TICKETSAPI.ModelsBD2Prueba
+{
+    public partial class Rangohora
+    {
+        public int Idperiodo { get; set; }
+        public string? Descripcion { get; set; }
+        public DateTime? Horain { get; set; }
+        public DateTime? Horafin { get; set; }
+    }
+}

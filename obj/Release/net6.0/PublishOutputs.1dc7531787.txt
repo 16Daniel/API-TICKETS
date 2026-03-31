@@ -4,9 +4,11 @@ D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\appsettings.json
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\TICKETSAPI.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\TICKETSAPI.runtimeconfig.json
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\TICKETSAPI.pdb
+D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\Dapper.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\EPPlus.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\EPPlus.Interfaces.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\EPPlus.System.Drawing.dll
+D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\Microsoft.Data.SqlClient.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\Microsoft.EntityFrameworkCore.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll

@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace TICKETSAPI.ModelsBD2Prueba
+{
+    public partial class Favoritosidioma
+    {
+        public int Codfavorito { get; set; }
+        public int Codidioma { get; set; }
+        public string? Descripcion { get; set; }
+        public byte[]? Version { get; set; }
+        public string? Desclarga { get; set; }
+
+        public virtual Favoritoscab CodfavoritoNavigation { get; set; } = null!;
+        public virtual Idioma CodidiomaNavigation { get; set; } = null!;
+    }
+}

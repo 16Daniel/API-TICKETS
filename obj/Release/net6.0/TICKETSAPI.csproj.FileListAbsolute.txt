@@ -90,3 +90,5 @@ D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\refint\TICKETSAPI.dll
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\TICKETSAPI.pdb
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\TICKETSAPI.genruntimeconfig.cache
 D:\PROYECTOS NETCORE\TICKETSAPI\obj\Release\net6.0\ref\TICKETSAPI.dll
+D:\PROYECTOS NETCORE\TICKETSAPI\bin\Release\net6.0\Dapper.dll
+D:\PROYECTOS NETCORE\TICKETSAPI\bin\Release\net6.0\Microsoft.Bcl.AsyncInterfaces.dll

@@ -17,21 +17,31 @@ namespace TICKETSAPI.ModelsTickets
         }
 
         public virtual DbSet<AccesosRuta> AccesosRutas { get; set; } = null!;
+        public virtual DbSet<BitacoraPersonal> BitacoraPersonals { get; set; } = null!;
         public virtual DbSet<CatArea> CatAreas { get; set; } = null!;
         public virtual DbSet<CatCategoria> CatCategorias { get; set; } = null!;
         public virtual DbSet<CatPrioridade> CatPrioridades { get; set; } = null!;
         public virtual DbSet<CatRole> CatRoles { get; set; } = null!;
         public virtual DbSet<CatRuta> CatRutas { get; set; } = null!;
         public virtual DbSet<CatStatus> CatStatuses { get; set; } = null!;
+        public virtual DbSet<CatTurno> CatTurnos { get; set; } = null!;
+        public virtual DbSet<ColoresAyc> ColoresAycs { get; set; } = null!;
+        public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
+        public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
+        public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
+        public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
+        public virtual DbSet<SucursalesFranquicia> SucursalesFranquicias { get; set; } = null!;
         public virtual DbSet<Ticket> Tickets { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
+        public virtual DbSet<VentaFranquicia> VentaFranquicias { get; set; } = null!;
+        public virtual DbSet<VentaFranquiciasDelivery> VentaFranquiciasDeliveries { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=192.168.31.52;Initial Catalog=TICKETSDB;Integrated Security=False;User Id=App2;Password=eVPUh82pWdSP9fPD;MultipleActiveResultSets=True;Connection Timeout=120000");
+                optionsBuilder.UseSqlServer("Data Source=operamx.no-ip.net;Initial Catalog=TICKETSDB;Integrated Security=False;User Id=App2;Password=eVPUh82pWdSP9fPD;MultipleActiveResultSets=True;Connection Timeout=120000");
             }
         }
 
@@ -46,6 +56,27 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.IdRol).HasColumnName("ID_ROL");
 
                 entity.Property(e => e.IdRuta).HasColumnName("ID_RUTA");
+            });
+
+            modelBuilder.Entity<BitacoraPersonal>(entity =>
+            {
+                entity.ToTable("BITACORA_PERSONAL");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Comentariosucursal).HasColumnName("COMENTARIOSUCURSAL");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Idemp).HasColumnName("IDEMP");
+
+                entity.Property(e => e.Idsucursal).HasColumnName("IDSUCURSAL");
+
+                entity.Property(e => e.Solucion).HasColumnName("SOLUCION");
+
+                entity.Property(e => e.Status).HasColumnName("STATUS");
             });
 
             modelBuilder.Entity<CatArea>(entity =>
@@ -114,6 +145,192 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.Nombre).HasColumnName("NOMBRE");
+            });
+
+            modelBuilder.Entity<CatTurno>(entity =>
+            {
+                entity.HasKey(e => e.ClaTurno);
+
+                entity.ToTable("CAT_TURNOS");
+
+                entity.Property(e => e.ClaTurno)
+                    .ValueGeneratedNever()
+                    .HasColumnName("CLA_TURNO");
+
+                entity.Property(e => e.Alias)
+                    .HasMaxLength(250)
+                    .HasColumnName("ALIAS");
+
+                entity.Property(e => e.ClaEmpresa).HasColumnName("CLA_EMPRESA");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(250)
+                    .HasColumnName("NOMBRE");
+            });
+
+            modelBuilder.Entity<ColoresAyc>(entity =>
+            {
+                entity.ToTable("COLORES_AYC");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Color)
+                    .HasMaxLength(50)
+                    .HasColumnName("COLOR");
+
+                entity.Property(e => e.Precio).HasColumnName("PRECIO");
+            });
+
+            modelBuilder.Entity<ControlAceite>(entity =>
+            {
+                entity.ToTable("CONTROL_ACEITE");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ComentariosCedis).HasColumnName("comentariosCedis");
+
+                entity.Property(e => e.ComentariosSucursal).HasColumnName("comentariosSucursal");
+
+                entity.Property(e => e.Diferencia)
+                    .HasMaxLength(10)
+                    .HasColumnName("diferencia")
+                    .IsFixedLength();
+
+                entity.Property(e => e.EntregaCedis).HasColumnName("entregaCedis");
+
+                entity.Property(e => e.EntregaSucursal).HasColumnName("entregaSucursal");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha");
+
+                entity.Property(e => e.Fecharecoleccion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecharecoleccion");
+
+                entity.Property(e => e.IdSucursal).HasColumnName("idSucursal");
+
+                entity.Property(e => e.Intercambio).HasColumnName("intercambio");
+
+                entity.Property(e => e.Manual).HasColumnName("manual");
+
+                entity.Property(e => e.Porcentaje75).HasColumnName("porcentaje75");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<ControlAceitePrueba>(entity =>
+            {
+                entity.ToTable("CONTROL_ACEITE_PRUEBAS");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ComentariosCedis).HasColumnName("comentariosCedis");
+
+                entity.Property(e => e.ComentariosSucursal).HasColumnName("comentariosSucursal");
+
+                entity.Property(e => e.Diferencia)
+                    .HasMaxLength(10)
+                    .HasColumnName("diferencia")
+                    .IsFixedLength();
+
+                entity.Property(e => e.EntregaCedis).HasColumnName("entregaCedis");
+
+                entity.Property(e => e.EntregaSucursal).HasColumnName("entregaSucursal");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha");
+
+                entity.Property(e => e.IdSucursal).HasColumnName("idSucursal");
+
+                entity.Property(e => e.Intercambio).HasColumnName("intercambio");
+
+                entity.Property(e => e.Porcentaje75).HasColumnName("porcentaje75");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<ControlTrampaAceite>(entity =>
+            {
+                entity.ToTable("CONTROL_TRAMPA_ACEITE");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ComentariosCedis).HasColumnName("comentariosCedis");
+
+                entity.Property(e => e.ComentariosSucursal).HasColumnName("comentariosSucursal");
+
+                entity.Property(e => e.Diferencia)
+                    .HasMaxLength(10)
+                    .HasColumnName("diferencia")
+                    .IsFixedLength();
+
+                entity.Property(e => e.EntregaCedis).HasColumnName("entregaCedis");
+
+                entity.Property(e => e.EntregaSucursal).HasColumnName("entregaSucursal");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecha");
+
+                entity.Property(e => e.Fecharecoleccion)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fecharecoleccion");
+
+                entity.Property(e => e.IdSucursal).HasColumnName("idSucursal");
+
+                entity.Property(e => e.Intercambio).HasColumnName("intercambio");
+
+                entity.Property(e => e.Manual).HasColumnName("manual");
+
+                entity.Property(e => e.Porcentaje75).HasColumnName("porcentaje75");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<PreciosAyc>(entity =>
+            {
+                entity.ToTable("PRECIOS_AYC");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CDomingo).HasColumnName("C_DOMINGO");
+
+                entity.Property(e => e.CJueves).HasColumnName("C_JUEVES");
+
+                entity.Property(e => e.CLunes).HasColumnName("C_LUNES");
+
+                entity.Property(e => e.CMartes).HasColumnName("C_MARTES");
+
+                entity.Property(e => e.CMiercoles).HasColumnName("C_MIERCOLES");
+
+                entity.Property(e => e.CSabado).HasColumnName("C_SABADO");
+
+                entity.Property(e => e.CViernes).HasColumnName("C_VIERNES");
+
+                entity.Property(e => e.Grupo)
+                    .HasMaxLength(50)
+                    .HasColumnName("GRUPO");
+
+                entity.Property(e => e.Ids).HasColumnName("IDS");
+            });
+
+            modelBuilder.Entity<SucursalesFranquicia>(entity =>
+            {
+                entity.ToTable("SUCURSALES_FRANQUICIAS");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Grupo)
+                    .HasMaxLength(50)
+                    .HasColumnName("GRUPO");
+
+                entity.Property(e => e.Idf).HasColumnName("IDF");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(250)
+                    .HasColumnName("NOMBRE");
             });
 
             modelBuilder.Entity<Ticket>(entity =>
@@ -212,6 +429,46 @@ namespace TICKETSAPI.ModelsTickets
                     .HasColumnName("NOMBRE");
 
                 entity.Property(e => e.Pass).HasColumnName("PASS");
+            });
+
+            modelBuilder.Entity<VentaFranquicia>(entity =>
+            {
+                entity.ToTable("VENTA_FRANQUICIAS");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Sucursal).HasColumnName("SUCURSAL");
+
+                entity.Property(e => e.VentaDelivery).HasColumnName("VENTA_DELIVERY");
+
+                entity.Property(e => e.VentaSalon).HasColumnName("VENTA_SALON");
+
+                entity.Property(e => e.VentaTotal).HasColumnName("VENTA_TOTAL");
+            });
+
+            modelBuilder.Entity<VentaFranquiciasDelivery>(entity =>
+            {
+                entity.ToTable("VENTA_FRANQUICIAS_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Didi).HasColumnName("DIDI");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Rappi).HasColumnName("RAPPI");
+
+                entity.Property(e => e.Sucursal)
+                    .HasMaxLength(250)
+                    .HasColumnName("SUCURSAL");
+
+                entity.Property(e => e.Uber).HasColumnName("UBER");
             });
 
             OnModelCreatingPartial(modelBuilder);
