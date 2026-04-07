@@ -146,12 +146,10 @@ namespace DashboardApi.Mail
 
             //regionales 
             mensaje.To.Add("jose.r@operamx.com");
-            mensaje.To.Add("monica.r@operamx.com");
             mensaje.To.Add("edith.h@operamx.com");
             mensaje.To.Add("christopher.m@operamx.com");
-            mensaje.To.Add("eduardo.p@operamx.com");
-            mensaje.To.Add("sergio.g@operamx.com");
             mensaje.To.Add("carlos.t@operamx.com");
+            mensaje.To.Add("israel.f@operamx.com"); 
 
             try
             {

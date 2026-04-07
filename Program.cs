@@ -51,22 +51,22 @@ builder.Services.AddQuartz(q =>
             .RepeatForever())
     );
 
-    //var faltasKey = new JobKey("faltaspersonalJob");
-    //q.AddJob<JobFaltasPersonal>(opts => opts.WithIdentity(faltasKey));
-    //q.AddTrigger(opts => opts
-    //    .ForJob(faltasKey)
-    //    .WithIdentity("faltaspersonalJob-trigger")
-    //    .WithCronSchedule("0 0 8 ? * WED *")
-    //);
-
-
     var faltasKey = new JobKey("faltaspersonalJob");
     q.AddJob<JobFaltasPersonal>(opts => opts.WithIdentity(faltasKey));
     q.AddTrigger(opts => opts
         .ForJob(faltasKey)
         .WithIdentity("faltaspersonalJob-trigger")
-        .WithCronSchedule("0 37 9 ? * * *")
+        .WithCronSchedule("0 0 8 ? * WED *")
     );
+
+
+    //var faltasKey = new JobKey("faltaspersonalJob");
+    //q.AddJob<JobFaltasPersonal>(opts => opts.WithIdentity(faltasKey));
+    //q.AddTrigger(opts => opts
+    //    .ForJob(faltasKey)
+    //    .WithIdentity("faltaspersonalJob-trigger")
+    //    .WithCronSchedule("0 37 9 ? * * *")
+    //);
 
 });
 

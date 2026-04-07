@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\PROYECTOS NETCORE\\TICKETSAPI\\TICKETSAPI.csproj": {}
+    "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj": {}
   },
   "projects": {
-    "D:\\PROYECTOS NETCORE\\TICKETSAPI\\TICKETSAPI.csproj": {
+    "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\PROYECTOS NETCORE\\TICKETSAPI\\TICKETSAPI.csproj",
+        "projectUniqueName": "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj",
         "projectName": "TICKETSAPI",
-        "projectPath": "D:\\PROYECTOS NETCORE\\TICKETSAPI\\TICKETSAPI.csproj",
+        "projectPath": "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj",
         "packagesPath": "C:\\Users\\devel\\.nuget\\packages\\",
-        "outputPath": "D:\\PROYECTOS NETCORE\\TICKETSAPI\\obj\\",
+        "outputPath": "D:\\repositorios git\\API-TICKETS\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\devel\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2KLIcKm2E40NOrxEmI0cvtiIytSw0136YsyYiIyu5r3/S3MjZzVq8bpg/Ot+3F5c0289+x1mSoKb/wtXhbF7Hw==",
+  "dgSpecHash": "kp5FzM1NnMX2pWz6n8SlUIa9XHIA2d481qH4QJyYRpvN4Ep0GI+hzN/0bhJ0VZBmhxynHNBrdDEt3wsTcPE7WQ==",
   "success": true,
-  "projectFilePath": "D:\\PROYECTOS NETCORE\\TICKETSAPI\\TICKETSAPI.csproj",
+  "projectFilePath": "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\devel\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\devel\\.nuget\\packages\\epplus\\7.2.2\\epplus.7.2.2.nupkg.sha512",
