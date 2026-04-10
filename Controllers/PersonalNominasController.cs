@@ -1,4 +1,5 @@
-﻿using DashboardApi.Mail;
+﻿using Dapper;
+using DashboardApi.Mail;
 using DashboardApi.ModelsBD2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -321,6 +322,79 @@ namespace TICKETSAPI.Controllers
         }
 
 
+        [HttpPost("getChecadasManuales")]
+        public async Task<IActionResult> getChecadasManuales([FromForm] DateTime fechaini, [FromForm] DateTime fechafin)
+        {
+            try
+            {
+                List<ChecadaManual> data = new List<ChecadaManual>();
+                // Cadena de conexión a tu base de datos FORTIA_PRIME
+                string connectionString = _tdbContext.Database.GetConnectionString(); 
+
+
+                using (var db = new SqlConnection(connectionString))
+                {
+                    // Definir los parámetros del procedimiento
+                    var parametros = new
+                    {
+                        FI = fechaini.Date,
+                        FF = fechafin.Date
+                    };
+
+                    // Ejecutar el procedimiento almacenado
+                    var resultado = db.Query<ChecadaManual>(
+                        "[dbo].[GET_NOMINA_CHECADAS_MANUALES]",
+                        parametros,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    data = resultado.ToList();
+                }
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+        [HttpPost("getTurnosLargos")]
+        public async Task<IActionResult> getTurnosLargos([FromForm] DateTime fechaini, [FromForm] DateTime fechafin)
+        {
+            try
+            {
+                List<turnoLargo> data = new List<turnoLargo>();
+                // Cadena de conexión a tu base de datos FORTIA_PRIME
+                string connectionString = _tdbContext.Database.GetConnectionString();
+
+
+                using (var db = new SqlConnection(connectionString))
+                {
+                    // Definir los parámetros del procedimiento
+                    var parametros = new
+                    {
+                        FI = fechaini.Date,
+                        FF = fechafin.Date
+                    };
+
+                    // Ejecutar el procedimiento almacenado
+                    var resultado = db.Query<turnoLargo>(
+                        "[dbo].[GET_NOMINA_TURNOS_LARGOS]",
+                        parametros,
+                        commandType: CommandType.StoredProcedure
+                    );
+
+                    data = resultado.ToList();
+                }
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            }
+        }
+
+
     }
 
     public class MarcajesRequest
@@ -369,6 +443,28 @@ namespace TICKETSAPI.Controllers
         public string nombrepuesto { get; set; }
         public int empleadosRequeridos { get; set; }
         public int empleadosFaltantes { get; set; } 
+    }
+
+    public class ChecadaManual
+    {
+        public int CLA_UBICACION { get; set; }
+        public string NOM_UBICACION { get; set; }
+        public DateTime FECHA { get; set; }
+        public int CLA_TRAB { get; set; }
+        public string NOMBRE { get; set; }
+        public string STATUS_TRAB { get; set; }
+        public int ENTRADA { get; set; }   
+        public int SALIDA { get; set; } 
+    }
+
+    public class turnoLargo
+    {
+        public int CLA_UBICACION { get; set; }
+        public string NOM_UBICACION { get; set; }
+        public DateTime FECHA { get; set; }
+        public int CLA_TRAB { get; set; }
+        public string NOMBRE { get; set; }
+        public string STATUS_TRAB { get; set; }
     }
 
 }
