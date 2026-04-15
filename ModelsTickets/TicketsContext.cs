@@ -29,6 +29,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
+        public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
         public virtual DbSet<SucursalesFranquicia> SucursalesFranquicias { get; set; } = null!;
         public virtual DbSet<Ticket> Tickets { get; set; } = null!;
@@ -287,6 +288,31 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Porcentaje75).HasColumnName("porcentaje75");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<PedidosDelivery>(entity =>
+            {
+                entity.HasKey(e => new { e.Idpedido, e.App });
+
+                entity.ToTable("PEDIDOS_DELIVERY");
+
+                entity.Property(e => e.Idpedido)
+                    .HasMaxLength(250)
+                    .HasColumnName("IDPEDIDO");
+
+                entity.Property(e => e.App)
+                    .HasMaxLength(20)
+                    .HasColumnName("APP");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Idsuc).HasColumnName("IDSUC");
+
+                entity.Property(e => e.Jdata).HasColumnName("JDATA");
+
+                entity.Property(e => e.Procesado).HasColumnName("PROCESADO");
             });
 
             modelBuilder.Entity<PreciosAyc>(entity =>
