@@ -26,7 +26,7 @@ namespace TICKETSAPI.Jobs
             _logger = logger;
             _contextdb2 = db2c;
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DefaultConnection");
+            connectionString = _configuration.GetConnectionString("TicketsConnection");
             _contextdb1 = BDC;
             _tdbContext = tdbContext;
         }

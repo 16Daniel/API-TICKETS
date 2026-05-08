@@ -26,7 +26,7 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-                var connectionString = _configuration.GetConnectionString("DB2");
+                var connectionString = _configuration.GetConnectionString("DB2Connection");
                 var productos = new List<ProductoConsulta>();
 
                 using (var connection = new SqlConnection(connectionString))

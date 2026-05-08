@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj": {}
+    "C:\\Users\\carlo\\OneDrive\\Documentos\\Proyectos\\DotNet\\API-TICKETS\\TICKETSAPI.csproj": {}
   },
   "projects": {
-    "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj": {
+    "C:\\Users\\carlo\\OneDrive\\Documentos\\Proyectos\\DotNet\\API-TICKETS\\TICKETSAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj",
+        "projectUniqueName": "C:\\Users\\carlo\\OneDrive\\Documentos\\Proyectos\\DotNet\\API-TICKETS\\TICKETSAPI.csproj",
         "projectName": "TICKETSAPI",
-        "projectPath": "D:\\repositorios git\\API-TICKETS\\TICKETSAPI.csproj",
-        "packagesPath": "C:\\Users\\devel\\.nuget\\packages\\",
-        "outputPath": "D:\\repositorios git\\API-TICKETS\\obj\\",
+        "projectPath": "C:\\Users\\carlo\\OneDrive\\Documentos\\Proyectos\\DotNet\\API-TICKETS\\TICKETSAPI.csproj",
+        "packagesPath": "C:\\Users\\carlo\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\carlo\\OneDrive\\Documentos\\Proyectos\\DotNet\\API-TICKETS\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\devel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\carlo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,6 +30,7 @@
         },
         "frameworks": {
           "net6.0": {
+            "framework": "net6.0",
             "targetAlias": "net6.0",
             "projectReferences": {}
           }
@@ -34,10 +39,17 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net6.0": {
+          "framework": "net6.0",
           "targetAlias": "net6.0",
           "dependencies": {
             "Dapper": {
@@ -104,7 +116,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300-preview.0.26177.108\\RuntimeIdentifierGraph.json"
         }
       }
     }

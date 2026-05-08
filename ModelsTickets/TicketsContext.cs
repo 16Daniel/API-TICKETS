@@ -7,13 +7,17 @@ namespace TICKETSAPI.ModelsTickets
 {
     public partial class TicketsContext : DbContext
     {
+        private readonly IConfiguration _configuration;
+
         public TicketsContext()
         {
         }
 
-        public TicketsContext(DbContextOptions<TicketsContext> options)
+        public TicketsContext(DbContextOptions<TicketsContext> options, IConfiguration configuration
+)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public virtual DbSet<AccesosRuta> AccesosRutas { get; set; } = null!;
@@ -41,8 +45,9 @@ namespace TICKETSAPI.ModelsTickets
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=operamx.no-ip.net;Initial Catalog=TICKETSDB;Integrated Security=False;User Id=App2;Password=eVPUh82pWdSP9fPD;MultipleActiveResultSets=True;Connection Timeout=120000");
+                var connectionString = _configuration.GetConnectionString("TicketsConnection");
+
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 

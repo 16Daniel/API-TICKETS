@@ -33,7 +33,7 @@ namespace TICKETSAPI.Controllers
 
             try
             {
-                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                var connectionString = _configuration.GetConnectionString("TicketsConnection");
                 using var connection = new SqlConnection(connectionString);
 
 

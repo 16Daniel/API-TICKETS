@@ -30,7 +30,7 @@ namespace TICKETSAPI.Controllers
             {
                 int[] sucursales = System.Text.Json.JsonSerializer.Deserialize<int[]>(jdataSuc);
 
-                var connectionString = _configuration.GetConnectionString("DBREBELWINGS");
+                var connectionString = _configuration.GetConnectionString("RebelWingsConnection");
                 var mermas = new List<Merma>();
                 List<ItemMerma> data = new List<ItemMerma>();
 

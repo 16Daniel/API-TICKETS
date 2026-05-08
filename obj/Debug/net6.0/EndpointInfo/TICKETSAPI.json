@@ -1,0 +1,3119 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "RW Tickets API",
+    "description": "API para administración del sistema de tickets",
+    "version": "v0.0.1"
+  },
+  "paths": {
+    "/api/Aceite/getRemisionesAceite": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaInicio": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechaFin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaInicio": {
+                  "style": "form"
+                },
+                "fechaFin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceitePendientes/{ids}": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceitePendientesAdmin": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceitePendientesCedis": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceiteH": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceiteCedisH": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "string"
+                  },
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/UpdateEntregaAceite": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "cantidad": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "comentarioSuc": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "cantidad": {
+                  "style": "form"
+                },
+                "comentarioSuc": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/ValidacionCedis": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "comentarioCedis": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "comentarioCedis": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/RechazoCedis": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "comentarioCedis": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "comentarioCedis": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/agregarEntregaManual": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fecha": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/agregarRecoleccionTrampaAceite": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fecha": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasTrampaAceitePendientes/{ids}": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/UpdateEntregaAceiteTA": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "cantidad": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "comentarioSuc": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "cantidad": {
+                  "style": "form"
+                },
+                "comentarioSuc": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/ValidacionCedisTA": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "comentarioCedis": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "comentarioCedis": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/RechazoCedisTA": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "comentarioCedis": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "comentarioCedis": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceitePendientesCedisTA": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceiteTAH": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceiteCedisTAH": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "string"
+                  },
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/eliminarLineaAceite/{id}": {
+      "delete": {
+        "tags": [
+          "Aceite"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getEntregasAceitePendientesAdminTA": {
+      "get": {
+        "tags": [
+          "Aceite"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/eliminarLineaAceiteTA/{id}": {
+      "delete": {
+        "tags": [
+          "Aceite"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/getReporteRecoleccionAceite": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "string"
+                  },
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Aceite/generar-excel": {
+      "post": {
+        "tags": [
+          "Aceite"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ControlAceite"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ControlAceite"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ControlAceite"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/getDepartamentos": {
+      "get": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/getUbicaciones": {
+      "get": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/getTurnos": {
+      "get": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/getTurnosdb": {
+      "get": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/guardarTurnodb": {
+      "post": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cla_turno": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "alias": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "cla_turno": {
+                  "style": "form"
+                },
+                "nombre": {
+                  "style": "form"
+                },
+                "alias": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/borrarTurnodb/{idt}": {
+      "delete": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "parameters": [
+          {
+            "name": "idt",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/getEmpleados/{idUbicacion}": {
+      "get": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "parameters": [
+          {
+            "name": "idUbicacion",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/CalendarioNomina/guardarTurnos": {
+      "post": {
+        "tags": [
+          "CalendarioNomina"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GuardarTurnoRequest"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GuardarTurnoRequest"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GuardarTurnoRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Catalogos/getSucursales": {
+      "get": {
+        "tags": [
+          "Catalogos"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Catalogos/getSucursalesGrupo": {
+      "get": {
+        "tags": [
+          "Catalogos"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ChatBot/validar-ticket": {
+      "post": {
+        "tags": [
+          "ChatBot"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idTicket": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idTicket": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ColoresAyc/getColoresAYC": {
+      "get": {
+        "tags": [
+          "ColoresAyc"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ColoresAyc/agregarColorAYC": {
+      "post": {
+        "tags": [
+          "ColoresAyc"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string"
+                  },
+                  "precio": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "color": {
+                  "style": "form"
+                },
+                "precio": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ColoresAyc/actualizarColorAYC": {
+      "put": {
+        "tags": [
+          "ColoresAyc"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "precio": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "id": {
+                  "style": "form"
+                },
+                "color": {
+                  "style": "form"
+                },
+                "precio": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ColoresAyc/eliminarColorAYC/{id}": {
+      "delete": {
+        "tags": [
+          "ColoresAyc"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DiccionarioPlaneacion/getDiccionario": {
+      "get": {
+        "tags": [
+          "DiccionarioPlaneacion"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DiccionarioPlaneacion/UpdateMedidaUds": {
+      "post": {
+        "tags": [
+          "DiccionarioPlaneacion"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rfc": {
+                    "type": "string"
+                  },
+                  "numid": {
+                    "type": "string"
+                  },
+                  "uds": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "umedida": {
+                    "type": "string"
+                  },
+                  "puds": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "pumedida": {
+                    "type": "string"
+                  },
+                  "iuds": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "iumedida": {
+                    "type": "string"
+                  },
+                  "planeacion": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "rfc": {
+                  "style": "form"
+                },
+                "numid": {
+                  "style": "form"
+                },
+                "uds": {
+                  "style": "form"
+                },
+                "umedida": {
+                  "style": "form"
+                },
+                "puds": {
+                  "style": "form"
+                },
+                "pumedida": {
+                  "style": "form"
+                },
+                "iuds": {
+                  "style": "form"
+                },
+                "iumedida": {
+                  "style": "form"
+                },
+                "planeacion": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DiccionarioPlaneacion/EliminarMedidaUds/{rfc}/{id}": {
+      "delete": {
+        "tags": [
+          "DiccionarioPlaneacion"
+        ],
+        "parameters": [
+          {
+            "name": "rfc",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/getArticulos/{idSucursal}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "idSucursal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/getArticulosV/{idSucursal}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "idSucursal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/ValidateStock/{id_sucursal}/{codarticulo}/{cantidad}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "id_sucursal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "codarticulo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/ValidateStockV/{id_sucursal}/{codarticulo}/{cantidad}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "id_sucursal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "cantidad",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "codarticulo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/ValidarCaptura/{id_sucursal}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "id_sucursal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/AddRegularizate": {
+      "post": {
+        "tags": [
+          "Iventario"
+        ],
+        "operationId": "AddRegularizate",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "codArticulo": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "codAlmacen": {
+                    "type": "string"
+                  },
+                  "cantidad": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "codArticulo": {
+                  "style": "form"
+                },
+                "codAlmacen": {
+                  "style": "form"
+                },
+                "cantidad": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/AddRegularizateV": {
+      "post": {
+        "tags": [
+          "Iventario"
+        ],
+        "operationId": "AddRegularizateV",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "codArticulo": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "codAlmacen": {
+                    "type": "string"
+                  },
+                  "cantidad": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "codArticulo": {
+                  "style": "form"
+                },
+                "codAlmacen": {
+                  "style": "form"
+                },
+                "cantidad": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/AddInventario": {
+      "post": {
+        "tags": [
+          "Iventario"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventarioDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventarioDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/InventarioDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Iventario/getUmedidas/{codArticulo}": {
+      "get": {
+        "tags": [
+          "Iventario"
+        ],
+        "parameters": [
+          {
+            "name": "codArticulo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Mail/enviarCorreo": {
+      "post": {
+        "tags": [
+          "Mail"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevoCorreoModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevoCorreoModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/NuevoCorreoModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Mermas/getMermas": {
+      "post": {
+        "tags": [
+          "Mermas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "jdataSuc": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                },
+                "jdataSuc": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PedidosDelivery/agregarPedidoDelivery": {
+      "post": {
+        "tags": [
+          "PedidosDelivery"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PedidosDelivery/getPedidoDelivery": {
+      "post": {
+        "tags": [
+          "PedidosDelivery"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fi": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ff": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fi": {
+                  "style": "form"
+                },
+                "ff": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/getPersonalNominas": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idUbicacion": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fechaIni": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechaFin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "idUbicacion": {
+                  "style": "form"
+                },
+                "fechaIni": {
+                  "style": "form"
+                },
+                "fechaFin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/gethorariosSuc": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idSuc": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "idSuc": {
+                  "style": "form"
+                },
+                "fecha": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/correoNotificacion": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idSuc": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "nombreRegional": {
+                    "type": "string"
+                  },
+                  "correo": {
+                    "type": "string"
+                  },
+                  "jdata": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idSuc": {
+                  "style": "form"
+                },
+                "nombreRegional": {
+                  "style": "form"
+                },
+                "correo": {
+                  "style": "form"
+                },
+                "jdata": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/registrarSolucion": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idSuc": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "idemp": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "solucion": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idSuc": {
+                  "style": "form"
+                },
+                "idemp": {
+                  "style": "form"
+                },
+                "solucion": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/registrarComentarioSuc": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idReg": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "comentario": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "idReg": {
+                  "style": "form"
+                },
+                "comentario": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/confirmarSolucion/{idreg}": {
+      "get": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "parameters": [
+          {
+            "name": "idreg",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/HistorialPersonal": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "jdatasuc": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                },
+                "jdatasuc": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/getChecadasManuales": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/PersonalNominas/getTurnosLargos": {
+      "post": {
+        "tags": [
+          "PersonalNominas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Preciosayc/getPreciosAYC": {
+      "get": {
+        "tags": [
+          "Preciosayc"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Preciosayc/agregarPreciosAYC": {
+      "post": {
+        "tags": [
+          "Preciosayc"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Preciosayc/actualizarPreciosAYC": {
+      "post": {
+        "tags": [
+          "Preciosayc"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreciosAycModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Preciosayc/eliminarPreciosAYC/{id}": {
+      "delete": {
+        "tags": [
+          "Preciosayc"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/getRoles": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/getRutas": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/getRutasRol/{idr}": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "parameters": [
+          {
+            "name": "idr",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/createRol": {
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/updateRol": {
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatRole"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/deleteRol/{id}": {
+      "get": {
+        "tags": [
+          "Roles"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Roles/saveAccesos": {
+      "post": {
+        "tags": [
+          "Roles"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "jdata": {
+                    "type": "string"
+                  },
+                  "idr": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              },
+              "encoding": {
+                "jdata": {
+                  "style": "form"
+                },
+                "idr": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Simplex/ObtenerDatosSimplex": {
+      "post": {
+        "tags": [
+          "Simplex"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "fi": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ff": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "encoding": {
+                "ids": {
+                  "style": "form"
+                },
+                "fi": {
+                  "style": "form"
+                },
+                "ff": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Tickets/getTicktesH": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fechaini": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "fechafin": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "idu": {
+                    "type": "string"
+                  },
+                  "rol": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "fechaini": {
+                  "style": "form"
+                },
+                "fechafin": {
+                  "style": "form"
+                },
+                "idu": {
+                  "style": "form"
+                },
+                "rol": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Tickets/addTicket": {
+      "post": {
+        "tags": [
+          "Tickets"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Ticket"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/getusUarios": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/createUser": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/updateUser": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/deleteUser/{id}": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/Login": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/logout/{idu}": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "parameters": [
+          {
+            "name": "idu",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Usuarios/TestCon": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Ventas/agregarVenta": {
+      "post": {
+        "tags": [
+          "Ventas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sucursal": {
+                    "type": "string"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ventaSalon": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ventaDelivery": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ventaTotal": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "sucursal": {
+                  "style": "form"
+                },
+                "fecha": {
+                  "style": "form"
+                },
+                "ventaSalon": {
+                  "style": "form"
+                },
+                "ventaDelivery": {
+                  "style": "form"
+                },
+                "ventaTotal": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Ventas/agregarVentaDelivery": {
+      "post": {
+        "tags": [
+          "Ventas"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sucursal": {
+                    "type": "string"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "ventaUber": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ventaRapi": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "ventaDidi": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              },
+              "encoding": {
+                "sucursal": {
+                  "style": "form"
+                },
+                "fecha": {
+                  "style": "form"
+                },
+                "ventaUber": {
+                  "style": "form"
+                },
+                "ventaRapi": {
+                  "style": "form"
+                },
+                "ventaDidi": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CatRole": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlAceite": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idSucursal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entregaCedis": {
+            "type": "number",
+            "format": "double"
+          },
+          "entregaSucursal": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "porcentaje75": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "intercambio": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "diferencia": {
+            "type": "string",
+            "nullable": true
+          },
+          "comentariosCedis": {
+            "type": "string",
+            "nullable": true
+          },
+          "comentariosSucursal": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "manual": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "fecharecoleccion": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GuardarTurnoRequest": {
+        "type": "object",
+        "properties": {
+          "claTrab": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "claEmpresa": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "claTurno": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InventarioDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "branch": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "invInicial": {
+            "type": "number",
+            "format": "double"
+          },
+          "invReg": {
+            "type": "number",
+            "format": "double"
+          },
+          "diferencia": {
+            "type": "number",
+            "format": "double"
+          },
+          "intentos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "articulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "updatedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginModel": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "pass": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NuevoCorreoModel": {
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinatario": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PedidoModel": {
+        "type": "object",
+        "properties": {
+          "idpedido": {
+            "type": "string",
+            "nullable": true
+          },
+          "app": {
+            "type": "string",
+            "nullable": true
+          },
+          "idsuc": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fecha": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "jdata": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreciosAycModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ids": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cLunes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cMartes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cMiercoles": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cJueves": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cViernes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cSabado": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cDomingo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "grupo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "idtk": {
+            "type": "string",
+            "nullable": true
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "idsuc": {
+            "type": "string",
+            "nullable": true
+          },
+          "statussuc": {
+            "type": "string",
+            "nullable": true
+          },
+          "idprov": {
+            "type": "string",
+            "nullable": true
+          },
+          "idcat": {
+            "type": "string",
+            "nullable": true
+          },
+          "descripcion": {
+            "type": "string",
+            "nullable": true
+          },
+          "solicitante": {
+            "type": "string",
+            "nullable": true
+          },
+          "prioridadsuc": {
+            "type": "string",
+            "nullable": true
+          },
+          "prioridadprov": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "responsable": {
+            "type": "string",
+            "nullable": true
+          },
+          "fechafin": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "duracion": {
+            "type": "string",
+            "nullable": true
+          },
+          "tiposoporte": {
+            "type": "string",
+            "nullable": true
+          },
+          "iduser": {
+            "type": "string",
+            "nullable": true
+          },
+          "comentarios": {
+            "type": "string",
+            "nullable": true
+          },
+          "nombrecategoria": {
+            "type": "string",
+            "nullable": true
+          },
+          "comentariosfinales": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nombre": {
+            "type": "string",
+            "nullable": true
+          },
+          "apellidoP": {
+            "type": "string",
+            "nullable": true
+          },
+          "apellidoM": {
+            "type": "string",
+            "nullable": true
+          },
+          "idRol": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "pass": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

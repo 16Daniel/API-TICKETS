@@ -29,7 +29,7 @@ namespace DashboardApi.Controllers
             _logger = logger;
             _contextdb2 = db2c;
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DB2");
+            connectionString = _configuration.GetConnectionString("DB2Connection");
             _tdbContext = tdbContext;
         }
 
