@@ -9,6 +9,7 @@ using TICKETSAPI.ModelsTickets;
 using TICKETSAPI.Jobs;
 using TICKETSAPI.ModelsBD2Prueba;
 using Microsoft.OpenApi.Models;
+using TICKETSAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,28 +75,28 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API para administración del sistema de tickets"
     });
 
-    //options.AddSecurityDefinition("ApiKey", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    //{
-    //    Description = "API Key requerida en el header: x-api-key",
-    //    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-    //    Name = "x-api-key",
-    //    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
-    //});
+    options.AddSecurityDefinition("ApiKey", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "API Key requerida en el header: x-api-key",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Name = "x-api-key",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+    });
 
-    //options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    //{
-    //    {
-    //        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    //        {
-    //            Reference = new Microsoft.OpenApi.Models.OpenApiReference
-    //            {
-    //                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-    //                Id = "ApiKey"
-    //            }
-    //        },
-    //        new string[] {}
-    //    }
-    //});
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "ApiKey"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 var app = builder.Build();
@@ -112,6 +113,8 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 
