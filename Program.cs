@@ -8,25 +8,25 @@ using TICKETSAPI.Funciones;
 using TICKETSAPI.ModelsTickets;
 using TICKETSAPI.Jobs;
 using TICKETSAPI.ModelsBD2Prueba;
+using Microsoft.OpenApi.Models;
+using TICKETSAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 
 
-var defualtconnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var connectionString = builder.Configuration.GetConnectionString("DBREBELWINGS");
-var connectionStringBD1 = builder.Configuration.GetConnectionString("DB1");
-var connectionStringBD2 = builder.Configuration.GetConnectionString("DB2");
-var connectionStringBD2P = builder.Configuration.GetConnectionString("DB2PRUEBA");
+var TicketsConnection = builder.Configuration.GetConnectionString("TicketsConnection");
+var RebelWingsConnection = builder.Configuration.GetConnectionString("RebelWingsConnection");
+var DB1Connection = builder.Configuration.GetConnectionString("DB1Connection");
+var DB2Connection = builder.Configuration.GetConnectionString("DB2Connection");
+var DB2PruebaConnection = builder.Configuration.GetConnectionString("DB2PruebaConnection");
 
-builder.Services.AddDbContext<DBRebelContext>(options => options.UseSqlServer(connectionString))
-    .AddDbContext<BD1Context>(options => options.UseSqlServer(connectionStringBD1))
-    .AddDbContext<BD2Context>(options => options.UseSqlServer(connectionStringBD2))
-     .AddDbContext<BD2ContextPrueba>(options => options.UseSqlServer(connectionStringBD2P))
-     .AddDbContext<TicketsContext>(options => options.UseSqlServer(defualtconnectionString));
+builder.Services.AddDbContext<DBRebelContext>(options => options.UseSqlServer(RebelWingsConnection))
+    .AddDbContext<BD1Context>(options => options.UseSqlServer(DB1Connection))
+    .AddDbContext<BD2Context>(options => options.UseSqlServer(DB2Connection))
+     .AddDbContext<BD2ContextPrueba>(options => options.UseSqlServer(DB2PruebaConnection))
+     .AddDbContext<TicketsContext>(options => options.UseSqlServer(TicketsConnection));
 
 
 builder.Services.AddCors(policyBuilder =>
@@ -59,15 +59,6 @@ builder.Services.AddQuartz(q =>
         .WithCronSchedule("0 0 8 ? * WED *")
     );
 
-
-    //var faltasKey = new JobKey("faltaspersonalJob");
-    //q.AddJob<JobFaltasPersonal>(opts => opts.WithIdentity(faltasKey));
-    //q.AddTrigger(opts => opts
-    //    .ForJob(faltasKey)
-    //    .WithIdentity("faltaspersonalJob-trigger")
-    //    .WithCronSchedule("0 37 9 ? * * *")
-    //);
-
 });
 
 // Quartz como hosted service
@@ -75,17 +66,41 @@ builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "RW Tickets API",
+        Version = "v0.0.1",
+        Description = "API para administración del sistema de tickets"
+    });
+
+    options.AddSecurityDefinition("ApiKey", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Description = "API Key requerida en el header: x-api-key",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Name = "x-api-key",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "ApiKey"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 app.UseCors();
-
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -98,6 +113,8 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.UseAuthorization();
 
