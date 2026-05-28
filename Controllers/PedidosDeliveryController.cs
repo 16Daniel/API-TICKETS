@@ -70,6 +70,54 @@ namespace TICKETSAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpGet]
+        [Route("getDiccionario")]
+        public async Task<IActionResult> getdiccionario([FromForm] int ids, [FromForm] DateTime fi, [FromForm] DateTime ff)
+        {
+            try
+            {
+                var data = _tdbContext.DiccionarioDeliveries.ToList();    
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        [Route("traducirPedido")]
+        public async Task<IActionResult> traducirpedido([FromBody] traduccionmodel pedido)
+        {
+            try
+            {
+               foreach(var item in pedido.items) 
+                {
+                    var itemdiccionario = _tdbContext.DiccionarioDeliveries.Where(x=>x.Nombre.ToLower() == item.nombre.ToLower() && x.Tienda == pedido.tienda).FirstOrDefault();
+                    if (itemdiccionario != null) 
+                    {
+                        item.codarticulo = itemdiccionario.Codicg; 
+                    }
+                    foreach (var itemModel in item.subitems) 
+                    {
+                        var itemdiccionario2 = _tdbContext.DiccionarioDeliveries.Where(x => x.Nombre.ToLower() == itemModel.nombre.ToLower() && x.Tienda == pedido.tienda).FirstOrDefault();
+                        if (itemdiccionario2 != null) 
+                        {
+                            itemModel.codarticulo = itemdiccionario2.Codicg;
+                            itemModel.codmodificador = itemdiccionario2.Codmodificador; 
+                        }
+                    }
+                }
+                return Ok(pedido);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 
 
@@ -81,4 +129,30 @@ namespace TICKETSAPI.Controllers
         public long fecha { get; set; }
         public string jdata { get; set; }
     }
+
+    public class traduccionmodel 
+    {
+        public string tienda { get; set; }
+        public List<itemModel> items { get; set; }
+    }
+    public class subitemModel
+    {
+        public string nombre { get; set; }
+        public double precio { get; set; }
+        public int cantidad { get; set; }
+
+        public int? codarticulo { get; set; }
+        public int? codmodificador { get; set; }
+
+    }
+
+    public class itemModel
+    {
+        public string nombre { get; set; }
+        public double precio { get; set; }
+        public int cantidad { get; set; }
+        public int? codarticulo { get; set; }
+        public List<subitemModel> subitems { get; set; }
+    }
+
 }
