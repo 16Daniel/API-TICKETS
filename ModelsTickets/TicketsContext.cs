@@ -7,17 +7,13 @@ namespace TICKETSAPI.ModelsTickets
 {
     public partial class TicketsContext : DbContext
     {
-        private readonly IConfiguration _configuration;
-
         public TicketsContext()
         {
         }
 
-        public TicketsContext(DbContextOptions<TicketsContext> options, IConfiguration configuration
-)
+        public TicketsContext(DbContextOptions<TicketsContext> options)
             : base(options)
         {
-            _configuration = configuration;
         }
 
         public virtual DbSet<AccesosRuta> AccesosRutas { get; set; } = null!;
@@ -33,6 +29,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
+        public virtual DbSet<DiccionarioDelivery> DiccionarioDeliveries { get; set; } = null!;
         public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
         public virtual DbSet<SucursalesFranquicia> SucursalesFranquicias { get; set; } = null!;
@@ -43,12 +40,7 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var connectionString = _configuration.GetConnectionString("TicketsConnection");
-
-                optionsBuilder.UseSqlServer(connectionString);
-            }
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -293,6 +285,27 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Porcentaje75).HasColumnName("porcentaje75");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+            });
+
+            modelBuilder.Entity<DiccionarioDelivery>(entity =>
+            {
+                entity.ToTable("DICCIONARIO_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Codicg).HasColumnName("CODICG");
+
+                entity.Property(e => e.Codmodificador).HasColumnName("CODMODIFICADOR");
+
+                entity.Property(e => e.Esmodificador).HasColumnName("ESMODIFICADOR");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(250)
+                    .HasColumnName("NOMBRE");
+
+                entity.Property(e => e.Tienda)
+                    .HasMaxLength(50)
+                    .HasColumnName("TIENDA");
             });
 
             modelBuilder.Entity<PedidosDelivery>(entity =>
