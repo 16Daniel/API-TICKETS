@@ -74,7 +74,7 @@ namespace TICKETSAPI.Controllers
 
         [HttpGet]
         [Route("getDiccionario")]
-        public async Task<IActionResult> getdiccionario([FromForm] int ids, [FromForm] DateTime fi, [FromForm] DateTime ff)
+        public async Task<IActionResult> getdiccionario()
         {
             try
             {
