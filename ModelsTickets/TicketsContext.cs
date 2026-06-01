@@ -40,7 +40,8 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
+            if (!optionsBuilder.IsConfigured)
+            {}
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -481,9 +482,13 @@ namespace TICKETSAPI.ModelsTickets
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
+                entity.Property(e => e.Cobros).HasColumnName("COBROS");
+
                 entity.Property(e => e.Fecha)
                     .HasColumnType("datetime")
                     .HasColumnName("FECHA");
+
+                entity.Property(e => e.Refiles).HasColumnName("REFILES");
 
                 entity.Property(e => e.Sucursal).HasColumnName("SUCURSAL");
 

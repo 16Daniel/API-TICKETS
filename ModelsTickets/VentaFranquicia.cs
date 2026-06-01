@@ -11,5 +11,7 @@ namespace TICKETSAPI.ModelsTickets
         public double? VentaDelivery { get; set; }
         public double VentaTotal { get; set; }
         public DateTime? Fecha { get; set; }
+        public int? Cobros { get; set; }
+        public int? Refiles { get; set; }
     }
 }

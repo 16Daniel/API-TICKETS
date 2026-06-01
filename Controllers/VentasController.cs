@@ -30,7 +30,7 @@ namespace TICKETSAPI.Controllers
                         Fecha = fecha,
                         VentaSalon = ventaSalon,
                         VentaDelivery = ventaDelivery,
-                        VentaTotal = ventaTotal
+                        VentaTotal = ventaTotal,
                     });
                 }
                 else 
@@ -75,6 +75,27 @@ namespace TICKETSAPI.Controllers
                     reg.Uber = ventaUber;
                     reg.Rappi = ventaRapi;
                     reg.Didi = ventaDidi; 
+                }
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("agregarTotalAyc")]
+        public async Task<IActionResult> agregarTotalAyc([FromForm] string sucursal, [FromForm] DateTime fecha, [FromForm] int totalCobros)
+        {
+            try
+            {
+                var reg = _tdbContext.VentaFranquicias.Where(x => x.Sucursal.Trim() == sucursal.Trim() && x.Fecha.Value.Date == fecha.Date).FirstOrDefault();
+                if (reg != null)
+                {
+                    reg.Cobros = totalCobros;
+                    _tdbContext.VentaFranquicias.Update(reg); 
                 }
                 await _tdbContext.SaveChangesAsync();
                 return Ok();
