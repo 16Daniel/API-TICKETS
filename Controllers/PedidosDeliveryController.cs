@@ -87,6 +87,20 @@ namespace TICKETSAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("getClientes")]
+        public async Task<IActionResult> getClientes()
+        {
+            try
+            {
+                var data = _tdbContext.ClientesDeliveries.ToList();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("traducirPedido")]

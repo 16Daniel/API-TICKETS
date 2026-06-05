@@ -25,6 +25,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<CatRuta> CatRutas { get; set; } = null!;
         public virtual DbSet<CatStatus> CatStatuses { get; set; } = null!;
         public virtual DbSet<CatTurno> CatTurnos { get; set; } = null!;
+        public virtual DbSet<ClientesDelivery> ClientesDeliveries { get; set; } = null!;
         public virtual DbSet<ColoresAyc> ColoresAycs { get; set; } = null!;
         public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
@@ -40,8 +41,7 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {}
+          
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -165,6 +165,27 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(250)
                     .HasColumnName("NOMBRE");
+            });
+
+            modelBuilder.Entity<ClientesDelivery>(entity =>
+            {
+                entity.ToTable("CLIENTES_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Codcliente).HasColumnName("CODCLIENTE");
+
+                entity.Property(e => e.DiseñoTicket)
+                    .HasMaxLength(250)
+                    .HasColumnName("DISEÑO_TICKET");
+
+                entity.Property(e => e.Marca)
+                    .HasMaxLength(250)
+                    .HasColumnName("MARCA");
+
+                entity.Property(e => e.Plataforma)
+                    .HasMaxLength(250)
+                    .HasColumnName("PLATAFORMA");
             });
 
             modelBuilder.Entity<ColoresAyc>(entity =>
