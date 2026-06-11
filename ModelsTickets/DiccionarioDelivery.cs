@@ -11,5 +11,6 @@ namespace TICKETSAPI.ModelsTickets
         public int Codicg { get; set; }
         public bool Esmodificador { get; set; }
         public int? Codmodificador { get; set; }
+        public int? Idmenu { get; set; }
     }
 }
