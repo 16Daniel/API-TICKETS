@@ -223,7 +223,7 @@ namespace TICKETSAPI.Controllers
                         }
                         for (int i = 0; i < 4; i++)
                         {
-                            HI = 14; HF = 18;
+                            HI = 17; HF = 18;
                             var parameters = new DynamicParameters();
                             parameters.Add("@IDS", request.Ids, DbType.Int32);
                             parameters.Add("@FI", fechatemp2, DbType.DateTime);

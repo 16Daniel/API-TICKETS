@@ -102,36 +102,228 @@ namespace TICKETSAPI.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("traducirPedido")]
-        public async Task<IActionResult> traducirpedido([FromBody] traduccionmodel pedido)
+        // GET: api/diccionario (estructura jerárquica para el frontend)
+        [HttpGet("getListadiccionario")]
+        public async Task<ActionResult<List<Object>>> GetEstructura()
+        {
+            List<Object> data = new List<Object>();
+            var articulosbd = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == false).ToList(); 
+
+            foreach(var item in articulosbd) 
+            {
+                var modificadoresart = _tdbContext.DiccionarioDeliveries.Where(x=> x.Esmodificador == true && x.Idmenu == item.Codicg).ToList(); 
+                var artbd = _bd2Context.Articulos1.Where(x=> x.Codarticulo == item.Codicg).FirstOrDefault();
+
+                List<ModificadorDto> datamodificadores = new List<ModificadorDto>();
+
+                foreach (var modificador in modificadoresart) 
+                {
+                    var artbdmod = _bd2Context.Articulos1.Where(x => x.Codarticulo == modificador.Codicg).FirstOrDefault();
+                    string nombremod = "";
+                    var modbd = _tdbContext.VwModificadores.Where(x => x.Codmodificador == modificador.Codmodificador).FirstOrDefault();
+                    if (modbd != null)
+                    {
+                        nombremod = modbd.Descripcion;
+                    }
+                    else 
+                    {
+                        var modmenu = _tdbContext.VwModificadoresMenus.Where(x => x.Codmodificador == modificador.Codmodificador).FirstOrDefault();
+                        if(modmenu != null) { nombremod = modmenu.Descripcion; }
+                    }
+
+                    var itemM = new ModificadorDto()
+                    {
+                        Id = modificador.Id,
+                        Tienda = modificador.Tienda,
+                        Nombre = modificador.Nombre,
+                        CodIcg = modificador.Codicg,
+                        CodModificador = modificador.Codmodificador,
+                        idMenu = modificador.Idmenu,
+                        Nombreicg = artbdmod.Descripcion,
+                        Nombremodificador = nombremod
+                    };
+                    datamodificadores.Add(itemM); 
+                }
+
+                var itema = new ArticuloDto()
+                {
+                    Id = item.Id,
+                    Tienda = item.Tienda,
+                    Nombre = item.Nombre,
+                    CodIcg = item.Codicg,
+                    CodModificador = item.Codmodificador,
+                    idMenu = item.Idmenu,
+                    Nombreicg = artbd.Descripcion,
+                    modificadores = datamodificadores
+                };
+
+                data.Add(itema);
+            }
+
+            return Ok(data);
+        }
+
+        // GET: api/diccionario/{id}
+        [HttpGet("diccionario/{id}")]
+        public async Task<ActionResult<DiccionarioDelivery>> GetItem(int id)
+        {
+            var item = await _tdbContext.DiccionarioDeliveries.FindAsync(id);
+            if (item == null) return NotFound();
+            return item;
+        }
+
+        // POST: api/diccionario
+        [HttpPost("diccionario")]
+        public async Task<ActionResult> Create(List<DiccionarioDelivery> data)
+        {
+            try 
+            {
+                _tdbContext.DiccionarioDeliveries.AddRange(data);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }catch(Exception ex) 
+            {
+                return StatusCode(500,ex.Message);
+            }
+        }
+
+        // PUT: api/diccionario/{id}
+        [HttpPut("diccionario/{id}")]
+        public async Task<IActionResult> Update(int id, DiccionarioDelivery item)
+        {
+            if (id != item.Id) return BadRequest();
+            _tdbContext.Entry(item).State = EntityState.Modified;
+
+            try
+            {
+                await _tdbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_tdbContext.DiccionarioDeliveries.Any(e => e.Id == id))
+                    return NotFound();
+                throw;
+            }
+            return NoContent();
+        }
+
+        // DELETE: api/diccionario/{id}
+        [HttpDelete("diccionario/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var item = await _tdbContext.DiccionarioDeliveries.FindAsync(id);
+            if (item == null) return NotFound();
+
+            if (!item.Esmodificador && item.Idmenu != null)
+            {
+                var modificadores = _tdbContext.DiccionarioDeliveries
+                    .Where(x => x.Idmenu == item.Codicg && x.Esmodificador == true);
+                _tdbContext.DiccionarioDeliveries.RemoveRange(modificadores);
+            }
+            _tdbContext.DiccionarioDeliveries.Remove(item);
+            await _tdbContext.SaveChangesAsync();
+            return NoContent();
+        }
+
+
+        [HttpGet("getArticulosIcg")]
+        public async Task<ActionResult> GearticulosICg()
         {
             try
             {
-               foreach(var item in pedido.items) 
+                var articulos = _bd2Context.Articulos1
+                .Where(x => x.Descatalogado == "F" && (x.Seccion == 1018 || x.Seccion == 2019 || x.Seccion == 1025))
+                .Select(s => new { s.Codarticulo, s.Descripcion })
+                .ToList();
+                return Ok(articulos);
+            }
+            catch (Exception ex) 
+            {
+                return StatusCode(500, ex.Message);
+            }
+           
+        }
+
+        [HttpGet("getModificadoresArt/{id}")]
+        public async Task<ActionResult> GetmodificadoresArt(int id)
+        {
+            try
+            {
+               List<ModificadorArt> modificadores = new List<ModificadorArt>();
+                var mods = _tdbContext.VwModificadores.Where(x=> x.Codarticulo == id).ToList();
+                var modmenu = _tdbContext.VwModificadoresMenus.Where(x => x.Codarticulo == id).ToList();
+
+                foreach (var mod in mods) 
                 {
-                    var itemdiccionario = _tdbContext.DiccionarioDeliveries.Where(x=>x.Nombre.ToLower() == item.nombre.ToLower() && x.Tienda == pedido.tienda).FirstOrDefault();
-                    if (itemdiccionario != null) 
+                    var artsmod = _tdbContext.VwModificadoresDets.Where(x=> x.Codmodificador == mod.Codmodificador).ToList();
+
+                    foreach (var art in artsmod)
                     {
-                        item.codarticulo = itemdiccionario.Codicg; 
-                    }
-                    foreach (var itemModel in item.subitems) 
-                    {
-                        var itemdiccionario2 = _tdbContext.DiccionarioDeliveries.Where(x => x.Nombre.ToLower() == itemModel.nombre.ToLower() && x.Tienda == pedido.tienda).FirstOrDefault();
-                        if (itemdiccionario2 != null) 
+                        string nombreapp = ""; 
+                        var reg = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == true && x.Codicg == art.Codigo).FirstOrDefault();
+                        if(reg != null) { nombreapp = reg.Nombre; }
+                        var item = new ModificadorArt()
                         {
-                            itemModel.codarticulo = itemdiccionario2.Codicg;
-                            itemModel.codmodificador = itemdiccionario2.Codmodificador; 
-                        }
+                            codmodificador = mod.Codmodificador,
+                            codarticulo = art.Codigo,
+                            descripcion = art.Descripcion,
+                            nombremodificador = mod.Descripcion,
+                            nombreapp = nombreapp
+                        };
+
+                        modificadores.Add(item);
                     }
+
                 }
-                return Ok(pedido);
+
+                foreach (var mod in modmenu)
+                {
+                    var artsmod = _tdbContext.VwModificadoresDets.Where(x => x.Codmodificador == mod.Codmodificador).ToList();
+                    foreach (var art in artsmod)
+                    {
+                        string nombreapp = "";
+                        var reg = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == true && x.Codicg == art.Codigo).FirstOrDefault();
+                        if (reg != null) { nombreapp = reg.Nombre; }
+
+                        var item = new ModificadorArt()
+                        {
+                            codmodificador = mod.Codmodificador,
+                            codarticulo = art.Codigo,
+                            descripcion = art.Descripcion,
+                            nombremodificador = mod.Descripcion,
+                            nombreapp = nombreapp
+                        };
+
+                        modificadores.Add(item);
+                    }
+
+                }
+
+                return Ok(modificadores);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
+
         }
+
+
+        [HttpGet("getCatMarcas")]
+        public async Task<ActionResult> GetCatMarcas ()
+        {
+            try
+            {
+                var marcas = _tdbContext.CatMarcasDeliveries.ToList(); 
+                return Ok(marcas);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
     }
 
 
@@ -144,29 +336,39 @@ namespace TICKETSAPI.Controllers
         public string jdata { get; set; }
     }
 
-    public class traduccionmodel 
-    {
-        public string tienda { get; set; }
-        public List<itemModel> items { get; set; }
-    }
-    public class subitemModel
-    {
-        public string nombre { get; set; }
-        public double precio { get; set; }
-        public int cantidad { get; set; }
 
-        public int? codarticulo { get; set; }
-        public int? codmodificador { get; set; }
-
+    public class ModificadorDto
+    {
+        public int Id { get; set; }
+        public string Tienda { get; set; } = null!;
+        public string Nombre { get; set; } = null!;
+        public int CodIcg { get; set; }
+        public int? CodModificador { get; set; }
+        public int? idMenu { get; set; }
+        public string Nombreicg { get; set; }
+        public string Nombremodificador { get; set; }
     }
 
-    public class itemModel
+    public class ArticuloDto
     {
-        public string nombre { get; set; }
-        public double precio { get; set; }
-        public int cantidad { get; set; }
-        public int? codarticulo { get; set; }
-        public List<subitemModel> subitems { get; set; }
+        public int Id { get; set; }
+        public string Tienda { get; set; } = null!;
+        public string Nombre { get; set; } = null!;
+        public int CodIcg { get; set; }
+        public int? CodModificador { get; set; }
+        public int? idMenu { get; set; }
+        public string Nombreicg {  get; set; }
+        public List<ModificadorDto> modificadores { get; set; }
     }
+
+    public class ModificadorArt 
+    {
+        public int codmodificador { get; set; }
+        public int codarticulo { get; set; }
+        public string descripcion { get; set; }
+        public string nombremodificador { get; set; }
+        public string nombreapp {  get; set; }
+    }
+
 
 }

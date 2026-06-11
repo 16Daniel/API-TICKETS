@@ -20,6 +20,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<BitacoraPersonal> BitacoraPersonals { get; set; } = null!;
         public virtual DbSet<CatArea> CatAreas { get; set; } = null!;
         public virtual DbSet<CatCategoria> CatCategorias { get; set; } = null!;
+        public virtual DbSet<CatMarcasDelivery> CatMarcasDeliveries { get; set; } = null!;
         public virtual DbSet<CatPrioridade> CatPrioridades { get; set; } = null!;
         public virtual DbSet<CatRole> CatRoles { get; set; } = null!;
         public virtual DbSet<CatRuta> CatRutas { get; set; } = null!;
@@ -38,10 +39,13 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
         public virtual DbSet<VentaFranquicia> VentaFranquicias { get; set; } = null!;
         public virtual DbSet<VentaFranquiciasDelivery> VentaFranquiciasDeliveries { get; set; } = null!;
+        public virtual DbSet<VwModificadore> VwModificadores { get; set; } = null!;
+        public virtual DbSet<VwModificadoresDet> VwModificadoresDets { get; set; } = null!;
+        public virtual DbSet<VwModificadoresMenu> VwModificadoresMenus { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-          
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -99,6 +103,17 @@ namespace TICKETSAPI.ModelsTickets
                     .HasMaxLength(10)
                     .HasColumnName("NOMBRE")
                     .IsFixedLength();
+            });
+
+            modelBuilder.Entity<CatMarcasDelivery>(entity =>
+            {
+                entity.ToTable("CAT_MARCAS_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(250)
+                    .HasColumnName("NOMBRE");
             });
 
             modelBuilder.Entity<CatPrioridade>(entity =>
@@ -321,6 +336,8 @@ namespace TICKETSAPI.ModelsTickets
 
                 entity.Property(e => e.Esmodificador).HasColumnName("ESMODIFICADOR");
 
+                entity.Property(e => e.Idmenu).HasColumnName("IDMENU");
+
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(250)
                     .HasColumnName("NOMBRE");
@@ -539,6 +556,100 @@ namespace TICKETSAPI.ModelsTickets
                     .HasColumnName("SUCURSAL");
 
                 entity.Property(e => e.Uber).HasColumnName("UBER");
+            });
+
+            modelBuilder.Entity<VwModificadore>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("VW_MODIFICADORES");
+
+                entity.Property(e => e.Auto).HasColumnName("AUTO");
+
+                entity.Property(e => e.Codarticulo).HasColumnName("CODARTICULO");
+
+                entity.Property(e => e.Codmodificador).HasColumnName("CODMODIFICADOR");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(30)
+                    .HasColumnName("DESCRIPCION")
+                    .UseCollation("Latin1_General_CS_AI");
+
+                entity.Property(e => e.Gratis).HasColumnName("GRATIS");
+
+                entity.Property(e => e.Limite).HasColumnName("LIMITE");
+
+                entity.Property(e => e.Minimo).HasColumnName("MINIMO");
+
+                entity.Property(e => e.Multiselec)
+                    .HasMaxLength(1)
+                    .HasColumnName("MULTISELEC")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Orden).HasColumnName("ORDEN");
+
+                entity.Property(e => e.Posicion).HasColumnName("POSICION");
+            });
+
+            modelBuilder.Entity<VwModificadoresDet>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("VW_MODIFICADORES_DET");
+
+                entity.Property(e => e.Codigo).HasColumnName("CODIGO");
+
+                entity.Property(e => e.Codmodificador).HasColumnName("CODMODIFICADOR");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(40)
+                    .HasColumnName("DESCRIPCION")
+                    .UseCollation("Latin1_General_CS_AI");
+
+                entity.Property(e => e.Dosis).HasColumnName("DOSIS");
+
+                entity.Property(e => e.Esarticulo).HasColumnName("ESARTICULO");
+
+                entity.Property(e => e.Incprecio).HasColumnName("INCPRECIO");
+
+                entity.Property(e => e.Posicion).HasColumnName("POSICION");
+
+                entity.Property(e => e.Tienemodif).HasColumnName("TIENEMODIF");
+
+                entity.Property(e => e.Udselaboracion).HasColumnName("UDSELABORACION");
+            });
+
+            modelBuilder.Entity<VwModificadoresMenu>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("VW_MODIFICADORES_MENU");
+
+                entity.Property(e => e.Auto).HasColumnName("AUTO");
+
+                entity.Property(e => e.Codarticulo).HasColumnName("CODARTICULO");
+
+                entity.Property(e => e.Codmodificador).HasColumnName("CODMODIFICADOR");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(30)
+                    .HasColumnName("DESCRIPCION")
+                    .UseCollation("Latin1_General_CS_AI");
+
+                entity.Property(e => e.Gratis).HasColumnName("GRATIS");
+
+                entity.Property(e => e.Limite).HasColumnName("LIMITE");
+
+                entity.Property(e => e.Minimo).HasColumnName("MINIMO");
+
+                entity.Property(e => e.Multiselec)
+                    .HasMaxLength(1)
+                    .HasColumnName("MULTISELEC")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Orden).HasColumnName("ORDEN");
+
+                entity.Property(e => e.Posicion).HasColumnName("POSICION");
             });
 
             OnModelCreatingPartial(modelBuilder);
