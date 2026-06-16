@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq;
 using TICKETSAPI.ModelsTickets;
 
 namespace TICKETSAPI.Controllers
@@ -43,14 +44,15 @@ namespace TICKETSAPI.Controllers
                     });
                     await _tdbContext.SaveChangesAsync();
                 }
-                else 
+                else
                 {
                     regbd.Jdata = model.jdata;
                     _tdbContext.PedidosDeliveries.Update(regbd);
                     await _tdbContext.SaveChangesAsync();
                 }
                 return Ok();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -58,12 +60,12 @@ namespace TICKETSAPI.Controllers
 
         [HttpPost]
         [Route("getPedidoDelivery")]
-        public async Task<IActionResult> getPedidoDelivery([FromForm]int ids,[FromForm] DateTime fi,[FromForm] DateTime ff)
+        public async Task<IActionResult> getPedidoDelivery([FromForm] int ids, [FromForm] DateTime fi, [FromForm] DateTime ff)
         {
             try
             {
-                var pedidos = _tdbContext.PedidosDeliveries.Where(x=> x.Idsuc == ids && x.Fecha.Date >= fi.Date && x.Fecha.Date <= ff.Date).ToList();
-                return Ok(pedidos.OrderByDescending(x=>x.Fecha));
+                var pedidos = _tdbContext.PedidosDeliveries.Where(x => x.Idsuc == ids && x.Fecha.Date >= fi.Date && x.Fecha.Date <= ff.Date).ToList();
+                return Ok(pedidos.OrderByDescending(x => x.Fecha));
             }
             catch (Exception ex)
             {
@@ -78,7 +80,7 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-                var data = _tdbContext.DiccionarioDeliveries.ToList();    
+                var data = _tdbContext.DiccionarioDeliveries.ToList();
                 return Ok(data);
             }
             catch (Exception ex)
@@ -102,21 +104,87 @@ namespace TICKETSAPI.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("agregarCliente")]
+        public async Task<IActionResult> agregarCliente([FromBody] ClientesDelivery model)
+        {
+            try
+            {
+                // Añadimos el nuevo registro directamente
+                _tdbContext.ClientesDeliveries.Add(model);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("updateCliente")]
+        public async Task<IActionResult> updateCliente([FromBody] ClientesDelivery model)
+        {
+            try
+            {
+                var reg = await _tdbContext.ClientesDeliveries.FindAsync(model.Id);
+                if (reg == null)
+                {
+                    return NotFound("El cliente no existe.");
+                }
+
+                // Actualizamos las propiedades del registro encontrado
+                reg.Marca = model.Marca;
+                reg.Plataforma = model.Plataforma;
+                reg.Codcliente = model.Codcliente;
+                reg.DiseñoTicket = model.DiseñoTicket;
+
+                _tdbContext.ClientesDeliveries.Update(reg);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        [Route("eliminarCliente/{id}")]
+        public async Task<IActionResult> eliminarCliente(int id)
+        {
+            try
+            {
+                var reg = await _tdbContext.ClientesDeliveries.FindAsync(id);
+                if (reg != null)
+                {
+                    _tdbContext.ClientesDeliveries.Remove(reg);
+                    await _tdbContext.SaveChangesAsync();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         // GET: api/diccionario (estructura jerárquica para el frontend)
         [HttpGet("getListadiccionario")]
         public async Task<ActionResult<List<Object>>> GetEstructura()
         {
             List<Object> data = new List<Object>();
-            var articulosbd = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == false).ToList(); 
+            var articulosbd = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == false).ToList();
 
-            foreach(var item in articulosbd) 
+            foreach (var item in articulosbd)
             {
-                var modificadoresart = _tdbContext.DiccionarioDeliveries.Where(x=> x.Esmodificador == true && x.Idmenu == item.Codicg).ToList(); 
-                var artbd = _bd2Context.Articulos1.Where(x=> x.Codarticulo == item.Codicg).FirstOrDefault();
+                var modificadoresart = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == true && x.Idmenu == item.Codicg).ToList();
+                var artbd = _bd2Context.Articulos1.Where(x => x.Codarticulo == item.Codicg).FirstOrDefault();
 
                 List<ModificadorDto> datamodificadores = new List<ModificadorDto>();
 
-                foreach (var modificador in modificadoresart) 
+                foreach (var modificador in modificadoresart)
                 {
                     var artbdmod = _bd2Context.Articulos1.Where(x => x.Codarticulo == modificador.Codicg).FirstOrDefault();
                     string nombremod = "";
@@ -125,10 +193,10 @@ namespace TICKETSAPI.Controllers
                     {
                         nombremod = modbd.Descripcion;
                     }
-                    else 
+                    else
                     {
                         var modmenu = _tdbContext.VwModificadoresMenus.Where(x => x.Codmodificador == modificador.Codmodificador).FirstOrDefault();
-                        if(modmenu != null) { nombremod = modmenu.Descripcion; }
+                        if (modmenu != null) { nombremod = modmenu.Descripcion; }
                     }
 
                     var itemM = new ModificadorDto()
@@ -142,7 +210,7 @@ namespace TICKETSAPI.Controllers
                         Nombreicg = artbdmod.Descripcion,
                         Nombremodificador = nombremod
                     };
-                    datamodificadores.Add(itemM); 
+                    datamodificadores.Add(itemM);
                 }
 
                 var itema = new ArticuloDto()
@@ -176,14 +244,22 @@ namespace TICKETSAPI.Controllers
         [HttpPost("diccionario")]
         public async Task<ActionResult> Create(List<DiccionarioDelivery> data)
         {
-            try 
+            try
             {
-                _tdbContext.DiccionarioDeliveries.AddRange(data);
+                foreach(var item in data) 
+                {
+                    var reg = _tdbContext.DiccionarioDeliveries.Where(x=>x.Tienda == item.Tienda && x.Codicg == item.Codicg && x.Nombre == item.Nombre && x.Esmodificador == item.Esmodificador && x.Idmenu == item.Idmenu).FirstOrDefault();
+                    if (reg == null) 
+                    {
+                        _tdbContext.DiccionarioDeliveries.Add(item); 
+                    }
+                }
                 await _tdbContext.SaveChangesAsync();
                 return Ok();
-            }catch(Exception ex) 
+            }
+            catch (Exception ex)
             {
-                return StatusCode(500,ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -226,22 +302,23 @@ namespace TICKETSAPI.Controllers
         }
 
 
-        [HttpGet("getArticulosIcg")]
-        public async Task<ActionResult> GearticulosICg()
+        [HttpGet("getArticulosIcg/{secciones}")]
+        public async Task<ActionResult> GearticulosICg(string secciones)
         {
             try
             {
+                List<int> listasecciones = secciones.Split(',').Select(int.Parse).ToList();
                 var articulos = _bd2Context.Articulos1
-                .Where(x => x.Descatalogado == "F" && (x.Seccion == 1018 || x.Seccion == 2019 || x.Seccion == 1025))
+                .Where(x => x.Descatalogado == "F" && listasecciones.Contains((int)x.Seccion))
                 .Select(s => new { s.Codarticulo, s.Descripcion })
                 .ToList();
                 return Ok(articulos);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
-           
+
         }
 
         [HttpGet("getModificadoresArt/{id}")]
@@ -249,19 +326,19 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-               List<ModificadorArt> modificadores = new List<ModificadorArt>();
-                var mods = _tdbContext.VwModificadores.Where(x=> x.Codarticulo == id).ToList();
+                List<ModificadorArt> modificadores = new List<ModificadorArt>();
+                var mods = _tdbContext.VwModificadores.Where(x => x.Codarticulo == id).ToList();
                 var modmenu = _tdbContext.VwModificadoresMenus.Where(x => x.Codarticulo == id).ToList();
 
-                foreach (var mod in mods) 
+                foreach (var mod in mods)
                 {
-                    var artsmod = _tdbContext.VwModificadoresDets.Where(x=> x.Codmodificador == mod.Codmodificador).ToList();
+                    var artsmod = _tdbContext.VwModificadoresDets.Where(x => x.Codmodificador == mod.Codmodificador).ToList();
 
                     foreach (var art in artsmod)
                     {
-                        string nombreapp = ""; 
+                        string nombreapp = "";
                         var reg = _tdbContext.DiccionarioDeliveries.Where(x => x.Esmodificador == true && x.Codicg == art.Codigo).FirstOrDefault();
-                        if(reg != null) { nombreapp = reg.Nombre; }
+                        if (reg != null) { nombreapp = reg.Nombre; }
                         var item = new ModificadorArt()
                         {
                             codmodificador = mod.Codmodificador,
@@ -310,11 +387,11 @@ namespace TICKETSAPI.Controllers
 
 
         [HttpGet("getCatMarcas")]
-        public async Task<ActionResult> GetCatMarcas ()
+        public async Task<ActionResult> GetCatMarcas()
         {
             try
             {
-                var marcas = _tdbContext.CatMarcasDeliveries.ToList(); 
+                var marcas = _tdbContext.CatMarcasDeliveries.ToList();
                 return Ok(marcas);
             }
             catch (Exception ex)
@@ -324,8 +401,176 @@ namespace TICKETSAPI.Controllers
 
         }
 
+        [HttpPost("agregarCatMarcas")]
+        public async Task<ActionResult> agregarCatMarcas([FromBody] CatMarcasDelivery model)
+        {
+            try
+            {
+                _tdbContext.CatMarcasDeliveries.Add(model);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
+        [HttpPut("updateCatMarcas")]
+        public async Task<ActionResult> uptadeCatMarcas([FromBody] CatMarcasDelivery model)
+        {
+            try
+            {
+                var reg = await _tdbContext.CatMarcasDeliveries.FindAsync(model.Id);
+                if (reg != null)
+                {
+                    reg.Nombre = model.Nombre;
+                    reg.Secciones = model.Secciones;
+
+                    _tdbContext.CatMarcasDeliveries.Update(reg);
+                    await _tdbContext.SaveChangesAsync();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
+        [HttpDelete("eliminarCatMarcas/{id}")]
+        public async Task<ActionResult> borrarMarca(int id)
+        {
+            try
+            {
+                var reg = await _tdbContext.CatMarcasDeliveries.FindAsync(id);
+                if (reg != null)
+                {
+
+                    _tdbContext.CatMarcasDeliveries.Remove(reg);
+                    await _tdbContext.SaveChangesAsync();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
+
+        [HttpGet("getCombos")]
+        public async Task<ActionResult> getCombos()
+        {
+            try
+            {
+                List<combosDTO> data = new List<combosDTO>();
+
+                var regs = _tdbContext.CombosDeliveries.ToList();
+                foreach (var reg in regs)
+                {
+                    var articulocombo = _bd2Context.Articulos1.Where(x=> x.Codarticulo == reg.Idcombo).FirstOrDefault();
+                    List<int> numeros = reg.Articulos.Split(',').Select(int.Parse).ToList();
+
+                    List<Object> list = new List<Object>();
+                    foreach(var numero in numeros) 
+                    {
+                        var artbd = _bd2Context.Articulos1.Where(x=> x.Codarticulo == numero).FirstOrDefault();
+                        list.Add(new { codarticulo = artbd.Codarticulo, nombre = artbd.Descripcion});
+                    }
+
+                    data.Add(new combosDTO()
+                    {
+                        id = reg.Id,
+                        idcombo = reg.Idcombo,
+                        nombrecombo = articulocombo.Descripcion,
+                        articulos = list,
+                        idmarca = reg.Idmarca
+                    });
+
+                }
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
+        [HttpPost("agregarCombo")]
+        public async Task<IActionResult> agregarCombo([FromBody] CombosDelivery model)
+        {
+            try
+            {
+                _tdbContext.CombosDeliveries.Add(model);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("updateCombo")]
+        public async Task<IActionResult> updateCombo([FromBody] CombosDelivery model)
+        {
+            try
+            {
+                var reg = _tdbContext.CombosDeliveries.Where(x=>x.Id == model.Id).FirstOrDefault();   
+                if (reg == null)
+                {
+                    return NotFound("El combo no existe.");
+                }
+
+                reg.Idcombo = model.Idcombo;
+                reg.Articulos = model.Articulos;
+                reg.Idmarca = model.Idmarca;
+
+                _tdbContext.CombosDeliveries.Update(reg);
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("eliminarCombo/{id}")]
+        public async Task<IActionResult> eliminarCombo(int id)
+        {
+            try
+            {
+                var reg = await _tdbContext.CombosDeliveries.Where(x=> x.Id == id).FirstOrDefaultAsync();
+                if (reg != null)
+                {
+                    _tdbContext.CombosDeliveries.Remove(reg);
+                    await _tdbContext.SaveChangesAsync();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
     }
 
+    public class combosDTO 
+    {
+        public int id {  get; set; }
+        public int idcombo {  get; set; }
+        public string nombrecombo { get; set; }
+        public List<Object> articulos { get; set; }
+        public int? idmarca { get; set; }    
+    }
 
     public class PedidoModel   
     {
@@ -340,7 +585,7 @@ namespace TICKETSAPI.Controllers
     public class ModificadorDto
     {
         public int Id { get; set; }
-        public string Tienda { get; set; } = null!;
+        public int Tienda { get; set; }
         public string Nombre { get; set; } = null!;
         public int CodIcg { get; set; }
         public int? CodModificador { get; set; }
@@ -352,7 +597,7 @@ namespace TICKETSAPI.Controllers
     public class ArticuloDto
     {
         public int Id { get; set; }
-        public string Tienda { get; set; } = null!;
+        public int Tienda { get; set; }
         public string Nombre { get; set; } = null!;
         public int CodIcg { get; set; }
         public int? CodModificador { get; set; }
