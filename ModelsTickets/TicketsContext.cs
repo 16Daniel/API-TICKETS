@@ -28,6 +28,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<CatTurno> CatTurnos { get; set; } = null!;
         public virtual DbSet<ClientesDelivery> ClientesDeliveries { get; set; } = null!;
         public virtual DbSet<ColoresAyc> ColoresAycs { get; set; } = null!;
+        public virtual DbSet<CombosDelivery> CombosDeliveries { get; set; } = null!;
         public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
@@ -45,7 +46,6 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -114,6 +114,8 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(250)
                     .HasColumnName("NOMBRE");
+
+                entity.Property(e => e.Secciones).HasColumnName("SECCIONES");
             });
 
             modelBuilder.Entity<CatPrioridade>(entity =>
@@ -214,6 +216,19 @@ namespace TICKETSAPI.ModelsTickets
                     .HasColumnName("COLOR");
 
                 entity.Property(e => e.Precio).HasColumnName("PRECIO");
+            });
+
+            modelBuilder.Entity<CombosDelivery>(entity =>
+            {
+                entity.ToTable("COMBOS_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Articulos).HasColumnName("ARTICULOS");
+
+                entity.Property(e => e.Idcombo).HasColumnName("IDCOMBO");
+
+                entity.Property(e => e.Idmarca).HasColumnName("IDMARCA");
             });
 
             modelBuilder.Entity<ControlAceite>(entity =>
@@ -342,9 +357,7 @@ namespace TICKETSAPI.ModelsTickets
                     .HasMaxLength(250)
                     .HasColumnName("NOMBRE");
 
-                entity.Property(e => e.Tienda)
-                    .HasMaxLength(50)
-                    .HasColumnName("TIENDA");
+                entity.Property(e => e.Tienda).HasColumnName("TIENDA");
             });
 
             modelBuilder.Entity<PedidosDelivery>(entity =>
