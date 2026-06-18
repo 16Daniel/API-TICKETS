@@ -46,6 +46,7 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -196,9 +197,7 @@ namespace TICKETSAPI.ModelsTickets
                     .HasMaxLength(250)
                     .HasColumnName("DISEÑO_TICKET");
 
-                entity.Property(e => e.Marca)
-                    .HasMaxLength(250)
-                    .HasColumnName("MARCA");
+                entity.Property(e => e.Marca).HasColumnName("MARCA");
 
                 entity.Property(e => e.Plataforma)
                     .HasMaxLength(250)
