@@ -105,5 +105,31 @@ namespace TICKETSAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpPost]
+        [Route("agregarHitsDeVentas")]
+        public async Task<IActionResult> agregarDetallesVentas([FromForm] string sucursal, [FromForm] DateTime fecha, [FromForm] int cervezas, [FromForm]int destilados, [FromForm] int bsa, [FromForm] int itemsmenu)
+        {
+            try
+            {
+                var reg = _tdbContext.VentaFranquicias.Where(x => x.Sucursal.Trim() == sucursal.Trim() && x.Fecha.Value.Date == fecha.Date).FirstOrDefault();
+                if (reg != null)
+                {
+                    reg.Cervezas = cervezas;
+                    reg.Destilados = destilados;
+                    reg.Bsa = bsa;
+                    reg.ItemsMenu = itemsmenu; 
+                    _tdbContext.VentaFranquicias.Update(reg);
+                }
+                await _tdbContext.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }
