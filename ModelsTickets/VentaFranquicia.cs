@@ -13,5 +13,9 @@ namespace TICKETSAPI.ModelsTickets
         public DateTime? Fecha { get; set; }
         public int? Cobros { get; set; }
         public int? Refiles { get; set; }
+        public int? Cervezas { get; set; }
+        public int? Destilados { get; set; }
+        public int? Bsa { get; set; }
+        public int? ItemsMenu { get; set; }
     }
 }
