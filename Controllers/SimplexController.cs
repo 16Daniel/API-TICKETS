@@ -37,11 +37,14 @@ namespace TICKETSAPI.Controllers
                 using var connection = new SqlConnection(connectionString);
 
 
-                List<InformacionSimplexResponse> data = new List<InformacionSimplexResponse>();  
-                DateTime hoy = DateTime.Now;    
+                List<InformacionSimplexResponse> data = new List<InformacionSimplexResponse>();     
                 DateTime temp = request.Fi;
 
-                while(temp.Date <= request.Ff.Date )
+                DateTime fecha = DateTime.Now.Date;
+                DateTime hoy = fecha.AddDays(-(int)fecha.DayOfWeek);
+                hoy = hoy.AddDays(-7);
+
+                while (temp.Date <= request.Ff.Date )
                 {
 
                     if (temp.Date < hoy.Date)
@@ -135,7 +138,7 @@ namespace TICKETSAPI.Controllers
                         {
                             fechatemp2 = fechatemp2.AddDays(-7);
                         }
-                        for (int i = 0; i < 4; i++) 
+                        for (int i = 0; i < 8; i++) 
                         {
                             
                             HI = 0; HF = 14;
@@ -178,7 +181,7 @@ namespace TICKETSAPI.Controllers
                         {
                             fechatemp2 = fechatemp2.AddDays(-7);
                         }
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 8; i++)
                         {                            
                             HI = 14; HF = 17;
                             var parameters = new DynamicParameters();
@@ -221,7 +224,7 @@ namespace TICKETSAPI.Controllers
                         {
                             fechatemp2 = fechatemp2.AddDays(-7);
                         }
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 8; i++)
                         {
                             HI = 17; HF = 18;
                             var parameters = new DynamicParameters();
@@ -264,7 +267,7 @@ namespace TICKETSAPI.Controllers
                         {
                             fechatemp2 = fechatemp2.AddDays(-7);
                         }
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 8; i++)
                         {
                             HI = 18; HF = 22;
                             var parameters = new DynamicParameters();
@@ -308,7 +311,7 @@ namespace TICKETSAPI.Controllers
                         {
                             fechatemp2 = fechatemp2.AddDays(-7);
                         }
-                        for (int i = 0; i < 4; i++)
+                        for (int i = 0; i < 8; i++)
                         {
                             HI = 22; HF = 24;
                             var parameters = new DynamicParameters();
