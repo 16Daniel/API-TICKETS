@@ -35,6 +35,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<DiccionarioDelivery> DiccionarioDeliveries { get; set; } = null!;
         public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
+        public virtual DbSet<Simplex> Simplices { get; set; } = null!;
         public virtual DbSet<SucursalesFranquicia> SucursalesFranquicias { get; set; } = null!;
         public virtual DbSet<Ticket> Tickets { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
@@ -46,11 +47,7 @@ namespace TICKETSAPI.ModelsTickets
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=172.16.1.1;Initial Catalog=TICKETSDB;Integrated Security=False;User Id=App2;Password=8Z2bpwvZ2pzpXV7Q;MultipleActiveResultSets=True;Connection Timeout=120000");
-            }
+           
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -413,6 +410,15 @@ namespace TICKETSAPI.ModelsTickets
                     .HasColumnName("GRUPO");
 
                 entity.Property(e => e.Ids).HasColumnName("IDS");
+            });
+
+            modelBuilder.Entity<Simplex>(entity =>
+            {
+                entity.ToTable("SIMPLEX");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.ConfigMaestra).HasColumnName("CONFIG_MAESTRA");
             });
 
             modelBuilder.Entity<SucursalesFranquicia>(entity =>
