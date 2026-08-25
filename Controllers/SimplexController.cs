@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using TICKETSAPI.ModelsTickets;
 
 namespace TICKETSAPI.Controllers
 {
@@ -12,10 +13,53 @@ namespace TICKETSAPI.Controllers
     public class SimplexController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        protected TicketsContext _tdbContext;
 
-        public SimplexController(IConfiguration configuration) 
+        public SimplexController(IConfiguration configuration, TicketsContext ticketsContext) 
         {
             _configuration = configuration;
+            _tdbContext = ticketsContext;
+        }
+
+  
+       [HttpGet("getConfigMaestra")]
+        public async Task<IActionResult> getConfigMaestra([FromForm] InformacionSimplexRequest request) 
+        {
+            try 
+            {
+                string data = "";
+                var config = _tdbContext.Simplices.FirstOrDefault();
+                if(config != null) { data = config.ConfigMaestra; }
+                return Ok(data); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
+            }
+        }
+
+        [HttpPost("guardarConfigMaestra")]
+        public async Task<IActionResult> guardarConfigMaestra([FromForm] string data)
+        {
+            try
+            {
+                var config = _tdbContext.Simplices.FirstOrDefault();
+                if (config == null)
+                {
+                    _tdbContext.Simplices.Add(new Simplex() { ConfigMaestra = data});
+                }
+                else 
+                {
+                    config.ConfigMaestra = data; 
+                    _tdbContext.Simplices.Update(config);
+                }
+                await _tdbContext.SaveChangesAsync();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Internal server error", details = ex.Message });
+            }
         }
 
         [HttpPost("ObtenerDatosSimplex")]
