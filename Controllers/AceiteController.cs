@@ -70,8 +70,13 @@ namespace TICKETSAPI.Controllers
 
             foreach (var item in resultados) 
             {
+              
                 int idf = -1;
                 try { idf = int.Parse(item.CodAlmacen);  }catch (Exception ex) { idf = -1; }
+
+                DateTime ahora = DateTime.Now;
+                string folio = $"ACE-{idf}-{ahora:yyyyMMdd}-{ahora:HHmm}";
+
                 if (idf > -1) 
                 {
                     var reg = _tdbContext.ControlAceites.Where( x=>x.IdSucursal == idf && x.Fecha.Date == item.Fecha.Date && x.Manual ==  null).FirstOrDefault();
@@ -84,6 +89,7 @@ namespace TICKETSAPI.Controllers
                             EntregaCedis = (double)item.Compras,
                             Status = 1,
                             Fecharecoleccion = item.Fecha,
+                            Folio = folio
                         });
                        await _tdbContext.SaveChangesAsync();
                     }
@@ -198,9 +204,14 @@ namespace TICKETSAPI.Controllers
             var reg = _tdbContext.ControlAceites.Where(x => x.Id == idReg).FirstOrDefault();
             if (reg != null)
             {
+
+                DateTime ahora = DateTime.Now;
+                string folio = $"ACE-{reg.IdSucursal}-{reg.Id}";
+
                 reg.ComentariosCedis = comentarioCedis;
                 reg.Status = 3;
-                reg.Fecharecoleccion = DateTime.Now;    
+                reg.Fecharecoleccion = DateTime.Now;
+                reg.Folio = folio;
                 _tdbContext.ControlAceites.Update(reg);
                 await _tdbContext.SaveChangesAsync();
             }
@@ -234,6 +245,9 @@ namespace TICKETSAPI.Controllers
         {
             try 
             {
+                //DateTime ahora = DateTime.Now;
+                //string folio = $"ACE-{ids}-{ahora:yyyyMMdd}-{ahora:HHmm}";
+
                 _tdbContext.ControlAceites.Add(new ControlAceite()
                 {
                     IdSucursal = ids,

@@ -43,6 +43,13 @@ namespace TICKETSAPI.Jobs
             {
             }
         }
+
+        public static string GenerarFolio(int ids)
+        {
+            DateTime ahora = DateTime.Now;
+            return $"ACE-{ids}-{ahora:yyyyMMdd}-{ahora:HHmm}";
+        }
+
         public async Task actualizarRemisiones() 
         {
             var resultados = new List<RemisionAceite>();

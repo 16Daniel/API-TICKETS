@@ -18,5 +18,6 @@ namespace TICKETSAPI.ModelsTickets
         public int? Status { get; set; }
         public bool? Manual { get; set; }
         public DateTime? Fecharecoleccion { get; set; }
+        public string? Folio { get; set; }
     }
 }
