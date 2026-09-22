@@ -59,6 +59,35 @@ namespace TICKETSAPI.Controllers
         }
 
         [HttpPost]
+        [Route("agregarLogDiccionarioDelivery")]
+        public async Task<IActionResult> agregarLogDiccionarioDelivery([FromBody] ModeloLogDelivery model)
+        {
+            try
+            {   
+                var reg = _tdbContext.LogDiccionarioDeliveries.Where(x=> x.Sucursal == model.sucursal && x.Idpedido == model.idpedido && x.Procesado == false).FirstOrDefault();
+                if(reg == null) 
+                {
+                    _tdbContext.LogDiccionarioDeliveries.Add(new LogDiccionarioDelivery()
+                    {
+                        Articulo = model.articulo,
+                        Marca = model.marca,
+                        Plataforma = model.plataforma,
+                        Modificador = model.modificador,
+                        Procesado = false,
+                        Sucursal = model.sucursal,
+                        Idpedido = model.idpedido,
+                        Jsonpedido = model.jsonpedido
+                    });
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
         [Route("getPedidoDelivery")]
         public async Task<IActionResult> getPedidoDelivery([FromForm] int ids, [FromForm] DateTime fi, [FromForm] DateTime ff)
         {
@@ -246,12 +275,12 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-                foreach(var item in data) 
+                foreach (var item in data)
                 {
-                    var reg = _tdbContext.DiccionarioDeliveries.Where(x=>x.Tienda == item.Tienda && x.Codicg == item.Codicg && x.Nombre == item.Nombre && x.Esmodificador == item.Esmodificador && x.Idmenu == item.Idmenu).FirstOrDefault();
-                    if (reg == null) 
+                    var reg = _tdbContext.DiccionarioDeliveries.Where(x => x.Tienda == item.Tienda && x.Codicg == item.Codicg && x.Nombre == item.Nombre && x.Esmodificador == item.Esmodificador && x.Idmenu == item.Idmenu).FirstOrDefault();
+                    if (reg == null)
                     {
-                        _tdbContext.DiccionarioDeliveries.Add(item); 
+                        _tdbContext.DiccionarioDeliveries.Add(item);
                     }
                 }
                 await _tdbContext.SaveChangesAsync();
@@ -472,14 +501,14 @@ namespace TICKETSAPI.Controllers
                 var regs = _tdbContext.CombosDeliveries.ToList();
                 foreach (var reg in regs)
                 {
-                    var articulocombo = _bd2Context.Articulos1.Where(x=> x.Codarticulo == reg.Idcombo).FirstOrDefault();
+                    var articulocombo = _bd2Context.Articulos1.Where(x => x.Codarticulo == reg.Idcombo).FirstOrDefault();
                     List<int> numeros = reg.Articulos.Split(',').Select(int.Parse).ToList();
 
                     List<Object> list = new List<Object>();
-                    foreach(var numero in numeros) 
+                    foreach (var numero in numeros)
                     {
-                        var artbd = _bd2Context.Articulos1.Where(x=> x.Codarticulo == numero).FirstOrDefault();
-                        list.Add(new { codarticulo = artbd.Codarticulo, nombre = artbd.Descripcion});
+                        var artbd = _bd2Context.Articulos1.Where(x => x.Codarticulo == numero).FirstOrDefault();
+                        list.Add(new { codarticulo = artbd.Codarticulo, nombre = artbd.Descripcion });
                     }
 
                     data.Add(new combosDTO()
@@ -521,7 +550,7 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-                var reg = _tdbContext.CombosDeliveries.Where(x=>x.Id == model.Id).FirstOrDefault();   
+                var reg = _tdbContext.CombosDeliveries.Where(x => x.Id == model.Id).FirstOrDefault();
                 if (reg == null)
                 {
                     return NotFound("El combo no existe.");
@@ -546,7 +575,7 @@ namespace TICKETSAPI.Controllers
         {
             try
             {
-                var reg = await _tdbContext.CombosDeliveries.Where(x=> x.Id == id).FirstOrDefaultAsync();
+                var reg = await _tdbContext.CombosDeliveries.Where(x => x.Id == id).FirstOrDefaultAsync();
                 if (reg != null)
                 {
                     _tdbContext.CombosDeliveries.Remove(reg);
@@ -563,18 +592,18 @@ namespace TICKETSAPI.Controllers
 
     }
 
-    public class combosDTO 
+    public class combosDTO
     {
-        public int id {  get; set; }
-        public int idcombo {  get; set; }
+        public int id { get; set; }
+        public int idcombo { get; set; }
         public string nombrecombo { get; set; }
         public List<Object> articulos { get; set; }
-        public int? idmarca { get; set; }    
+        public int? idmarca { get; set; }
     }
 
-    public class PedidoModel   
+    public class PedidoModel
     {
-        public string idpedido {  get; set; }
+        public string idpedido { get; set; }
         public string app { get; set; }
         public int idsuc { get; set; }
         public long fecha { get; set; }
@@ -602,18 +631,28 @@ namespace TICKETSAPI.Controllers
         public int CodIcg { get; set; }
         public int? CodModificador { get; set; }
         public int? idMenu { get; set; }
-        public string Nombreicg {  get; set; }
+        public string Nombreicg { get; set; }
         public List<ModificadorDto> modificadores { get; set; }
     }
 
-    public class ModificadorArt 
+    public class ModificadorArt
     {
         public int codmodificador { get; set; }
         public int codarticulo { get; set; }
         public string descripcion { get; set; }
         public string nombremodificador { get; set; }
-        public string nombreapp {  get; set; }
+        public string nombreapp { get; set; }
     }
 
+    public class ModeloLogDelivery 
+    {
+        public string articulo { get; set; }
+        public string marca { get; set; }
+        public string plataforma { get; set; }
+        public string modificador { get; set; }
+        public string sucursal { get; set; }
+        public string idpedido { get; set; }    
+        public string jsonpedido { get; set; }
+    }
 
 }
