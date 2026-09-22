@@ -78,6 +78,8 @@ namespace TICKETSAPI.Controllers
                         Idpedido = model.idpedido,
                         Jsonpedido = model.jsonpedido
                     });
+                    await _tdbContext.SaveChangesAsync();
+                
                 }
                 return Ok();
             }
