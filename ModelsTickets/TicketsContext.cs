@@ -33,6 +33,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
         public virtual DbSet<DiccionarioDelivery> DiccionarioDeliveries { get; set; } = null!;
+        public virtual DbSet<LogDiccionarioDelivery> LogDiccionarioDeliveries { get; set; } = null!;
         public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
         public virtual DbSet<Simplex> Simplices { get; set; } = null!;
@@ -366,6 +367,44 @@ namespace TICKETSAPI.ModelsTickets
                     .HasColumnName("NOMBRE");
 
                 entity.Property(e => e.Tienda).HasColumnName("TIENDA");
+            });
+
+            modelBuilder.Entity<LogDiccionarioDelivery>(entity =>
+            {
+                entity.ToTable("LOG_DICCIONARIO_DELIVERY");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Articulo)
+                    .HasMaxLength(250)
+                    .HasColumnName("ARTICULO");
+
+                entity.Property(e => e.Idpedido)
+                    .HasMaxLength(250)
+                    .HasColumnName("IDPEDIDO");
+
+                entity.Property(e => e.Jsonpedido).HasColumnName("JSONPEDIDO");
+
+                entity.Property(e => e.Marca)
+                    .HasMaxLength(10)
+                    .HasColumnName("MARCA")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Modificador)
+                    .HasMaxLength(250)
+                    .HasColumnName("MODIFICADOR")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Plataforma)
+                    .HasMaxLength(10)
+                    .HasColumnName("PLATAFORMA")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Procesado).HasColumnName("PROCESADO");
+
+                entity.Property(e => e.Sucursal)
+                    .HasMaxLength(250)
+                    .HasColumnName("SUCURSAL");
             });
 
             modelBuilder.Entity<PedidosDelivery>(entity =>
