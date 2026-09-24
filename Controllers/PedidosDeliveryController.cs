@@ -89,6 +89,42 @@ namespace TICKETSAPI.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("getLogDiccionarioDelivery")]
+        public async Task<IActionResult> getLogDiccionarioDelivery()
+        {
+            try
+            {
+                var logs = _tdbContext.LogDiccionarioDeliveries.Where(x => x.Procesado == false).ToList();  
+                return Ok(logs);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("updateLogDiccionarioDelivery/{id}")]
+        public async Task<IActionResult> updateLogDiccionarioDelivery(int id)
+        {
+            try
+            {
+                var log = _tdbContext.LogDiccionarioDeliveries.Where(x => x.Id == id).FirstOrDefault(); 
+                if (log != null) 
+                {
+                    log.Procesado = true; 
+                    _tdbContext.LogDiccionarioDeliveries.Update(log);
+                    await _tdbContext.SaveChangesAsync();
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("getPedidoDelivery")]
         public async Task<IActionResult> getPedidoDelivery([FromForm] int ids, [FromForm] DateTime fi, [FromForm] DateTime ff)
