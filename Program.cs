@@ -10,11 +10,13 @@ using TICKETSAPI.Jobs;
 using TICKETSAPI.ModelsBD2Prueba;
 using Microsoft.OpenApi.Models;
 using TICKETSAPI.Middlewares;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+builder.Services.AddHttpClient();
 
 var TicketsConnection = builder.Configuration.GetConnectionString("TicketsConnection");
 var RebelWingsConnection = builder.Configuration.GetConnectionString("RebelWingsConnection");
@@ -33,6 +35,24 @@ builder.Services.AddCors(policyBuilder =>
     policyBuilder.AddDefaultPolicy(policy =>
         policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
 );
+
+builder.Services.AddSingleton(sp =>
+{
+    string projectId = builder.Configuration["Firebase:ProjectId"]!;
+    string credentialsPath = builder.Configuration["Firebase:CredentialsPath"]!;
+
+    // Combina la ruta para ubicar el archivo en la raíz del proyecto ejecutable
+    string fullCredentialsPath = Path.Combine(builder.Environment.ContentRootPath, credentialsPath);
+
+    // Carga la credencial privada descargada de la consola
+    GoogleCredential credential = GoogleCredential.FromFile(fullCredentialsPath);
+
+    return new FirestoreDbBuilder
+    {
+        ProjectId = projectId,
+        Credential = credential
+    }.Build();
+});
 
 builder.Services.AddScoped<FuncionesNomina>();
 builder.Services.AddScoped<FuncionesInventario>();
@@ -57,6 +77,19 @@ builder.Services.AddQuartz(q =>
         .ForJob(faltasKey)
         .WithIdentity("faltaspersonalJob-trigger")
         .WithCronSchedule("0 0 8 ? * WED *")
+    );
+
+
+    // Define la clave única para la tarea
+    var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
+
+    q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobnotificacionesKey)
+        .WithIdentity("RevisarTicketsVencidosTrigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInMinutes(1)
+            .RepeatForever()) // Repetición continua
     );
 
 });

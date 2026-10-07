@@ -34,6 +34,7 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
         public virtual DbSet<DiccionarioDelivery> DiccionarioDeliveries { get; set; } = null!;
         public virtual DbSet<LogDiccionarioDelivery> LogDiccionarioDeliveries { get; set; } = null!;
+        public virtual DbSet<NotificacionesWp> NotificacionesWps { get; set; } = null!;
         public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
         public virtual DbSet<Simplex> Simplices { get; set; } = null!;
@@ -405,6 +406,28 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Sucursal)
                     .HasMaxLength(250)
                     .HasColumnName("SUCURSAL");
+            });
+
+            modelBuilder.Entity<NotificacionesWp>(entity =>
+            {
+                entity.ToTable("NOTIFICACIONES_WP");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Idticket)
+                    .HasMaxLength(10)
+                    .HasColumnName("IDTICKET")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Nivel).HasColumnName("NIVEL");
+
+                entity.Property(e => e.TipoNotificacion)
+                    .HasMaxLength(50)
+                    .HasColumnName("TIPO_NOTIFICACION");
             });
 
             modelBuilder.Entity<PedidosDelivery>(entity =>
