@@ -161,7 +161,7 @@ namespace TICKETSAPI.Controllers
             var reg = _tdbContext.ControlAceites.Where(x => x.Id == idReg).FirstOrDefault();
             if (reg != null) 
             {  
-                var reganterior = _tdbContext.ControlAceites.Where(x => x.IdSucursal == reg.IdSucursal && x.Fecha.Date < reg.Fecha.Date).OrderByDescending(x => x.Fecha).FirstOrDefault();
+                var reganterior = _tdbContext.ControlAceites.Where(x => x.IdSucursal == reg.IdSucursal && x.Fecha.Date < reg.Fecha.Date && x.Manual == false).OrderByDescending(x => x.Fecha).FirstOrDefault();
                 reg.EntregaSucursal = cantidad;
                 reg.ComentariosSucursal = comentarioSuc;
 
