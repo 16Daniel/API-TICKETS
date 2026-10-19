@@ -47,17 +47,44 @@
                 _logger.LogInformation("Se encontraron {Count} tickets vencidos pendientes de notificación.", snapshot.Documents.Count);
 
                 foreach (DocumentSnapshot document in snapshot.Documents)
-                {
+                {   
                     var ticket = document.ToDictionary();
                     string ticketId = document.Id;
+                    string statusTicket = document.GetValue<string?>("idEstatusTicket") ?? "";
+                    double horasAtencion = document.GetValue<double?>("horasAtencion") ?? 0;
+                    double horasResolucion = document.GetValue<double?>("horasResolucion") ?? 0;
+                    DateTime fechacreacion = document.GetValue<DateTime?>("fecha") ?? DateTime.Now;
+                    DateTime fechaAtencion = document.GetValue<DateTime?>("fechaAtencion") ?? DateTime.Now;
 
-                    string telefonoAgente = ticket.ContainsKey("telefonoResponsable") ? ticket["telefonoResponsable"].ToString() : string.Empty;
-                    string titulo = ticket.ContainsKey("titulo") ? ticket["titulo"].ToString() : "Sin título";
-
-                    if (string.IsNullOrWhiteSpace(telefonoAgente))
+                    if (statusTicket == "1") 
                     {
-                        _logger.LogWarning("El ticket {TicketId} no tiene un teléfono registrado.", ticketId);
-                        continue;
+                        if(ObtenerHorasTranscurridas(fechacreacion)<24 && ObtenerHorasTranscurridas(fechacreacion) > horasAtencion) 
+                        {
+                            continue; 
+                        }
+
+                        if (ObtenerHorasTranscurridas(fechacreacion) > 24) 
+                        {
+                            continue;
+                        }
+                    } 
+
+                    if(int.Parse(statusTicket) > 1 && !int.Parse(statusTicket).Equals("8")) 
+                    {
+                        if (ObtenerHorasTranscurridas(fechaAtencion) < 24 && ObtenerHorasTranscurridas(fechaAtencion) > horasResolucion)
+                        {
+                            continue;
+                        }
+
+                        if (ObtenerHorasTranscurridas(fechaAtencion) > 24)
+                        {
+                            continue;
+                        }
+                    }
+
+                    if (int.Parse(statusTicket) == 8) 
+                    {
+                        continue; 
                     }
 
            
@@ -69,6 +96,12 @@
             }
         }
 
+        public static double ObtenerHorasTranscurridas(DateTime fechaInicial)
+        {
+            TimeSpan diferencia = DateTime.UtcNow - fechaInicial;
+
+            return diferencia.TotalHours;
+        }
 
         public async Task<bool> SendWhatsAppMessageAsync(string toNumber, string message)
         {
