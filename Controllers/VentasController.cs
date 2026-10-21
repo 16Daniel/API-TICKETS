@@ -200,7 +200,7 @@ namespace TICKETSAPI.Controllers
                         Cervezas = item.Cerveza,
                         Destilados = item.Destilados,
                         Bsa = item.Bsa,
-                        ItemsMenu = item.ItemsMenu,
+                        ItemsMenu = (int?)item.ItemsMenu,
 
                         Uber = item != null ? (decimal?)item.Venta_Uber : null,
                         Rappi = item != null ? (decimal?)item.Venta_Rappi : null,
@@ -236,7 +236,7 @@ namespace TICKETSAPI.Controllers
         public int? Cerveza { get; set; }
         public int? Destilados { get; set; }
         public int? Bsa { get; set; }
-        public int? ItemsMenu { get; set; }
+        public decimal? ItemsMenu { get; set; }
         public decimal? Venta_Uber { get; set; }
         public decimal? Venta_Didi { get; set; }
         public decimal? Venta_Rappi { get; set; }
