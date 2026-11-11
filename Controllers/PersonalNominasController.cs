@@ -394,6 +394,45 @@ namespace TICKETSAPI.Controllers
             }
         }
 
+        [HttpPost("agregarChecada")]
+        public async Task<IActionResult> InsertarRegistro([FromBody] RegistrarEntradaSalidaDto request)
+        {
+            if (request == null)
+                return BadRequest("Los datos de entrada son requeridos.");
+
+            using var connection = new SqlConnection(_tdbContext.Database.GetConnectionString());
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@FECHA_ENTSAL", request.FechaEntSal, DbType.DateTime);
+            parameters.Add("@CLA_TRAB", request.ClaTrab, DbType.Int32);
+            parameters.Add("@CLA_RELOJ", request.ClaReloj, DbType.Int32);
+
+            try
+            {
+                var folAuto = await connection.ExecuteScalarAsync<int>(
+                    "SP_AGREGAR_CHECADA",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+
+                return Ok(new
+                {
+                    Success = true,
+                    Message = "Registro guardado correctamente.",
+                    FolAuto = folAuto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Success = false,
+                    Message = "Ocurrió un error al guardar el registro.",
+                    Error = ex.Message
+                });
+            }
+        }
+
 
     }
 
@@ -465,6 +504,13 @@ namespace TICKETSAPI.Controllers
         public int CLA_TRAB { get; set; }
         public string NOMBRE { get; set; }
         public string STATUS_TRAB { get; set; }
+    }
+
+    public class RegistrarEntradaSalidaDto
+    {
+        public DateTime FechaEntSal { get; set; }
+        public int ClaTrab { get; set; }
+        public int ClaReloj { get; set; }
     }
 
 }
