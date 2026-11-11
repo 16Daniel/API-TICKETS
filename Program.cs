@@ -8,6 +8,7 @@ using TICKETSAPI.Funciones;
 using TICKETSAPI.ModelsTickets;
 using TICKETSAPI.Jobs;
 using TICKETSAPI.ModelsBD2Prueba;
+using TICKETSAPI.Repositories;
 using Microsoft.OpenApi.Models;
 using TICKETSAPI.Middlewares;
 using Google.Apis.Auth.OAuth2;
@@ -74,6 +75,7 @@ builder.Services.AddScoped<FuncionesNomina>();
 builder.Services.AddScoped<FuncionesInventario>();
 builder.Services.AddScoped<MailC>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IWorkforceRepository, WorkforceRepository>();
 
 //Configurar Quartz
 builder.Services.AddQuartz(q =>
@@ -97,30 +99,27 @@ builder.Services.AddQuartz(q =>
     );
 
 
-    // Define la clave única para la tarea
-    var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
+    //// Define la clave única para la tarea
+    //var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
 
-    q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
+    //q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
 
-    q.AddTrigger(opts => opts
-        .ForJob(jobnotificacionesKey)
-        .WithIdentity("RevisarTicketsVencidosTrigger")
-        .StartNow() // <--- Ejecuta el job inmediatamente al iniciar la aplicación
-        .WithSimpleSchedule(x => x
-            .WithIntervalInMinutes(60)
-            .RepeatForever()) // Repetición continua cada 60 minutos
-    );
+    //q.AddTrigger(opts => opts
+    //    .ForJob(jobnotificacionesKey)
+    //    .WithIdentity("RevisarTicketsVencidosTrigger")
+    //    .StartNow() // <--- Ejecuta el job inmediatamente al iniciar la aplicación
+    //    .WithSimpleSchedule(x => x
+    //        .WithIntervalInMinutes(60)
+    //        .RepeatForever()) // Repetición continua cada 60 minutos
+    //);
 
-    var jobVacioKey = new JobKey("jobVacio");
-    q.AddJob<JobVacio>(opts => opts.WithIdentity(jobVacioKey));
-    q.AddTrigger(opts => opts
-        .ForJob(jobVacioKey)
-        .WithIdentity("jobVacio-trigger")
-        .StartNow()
-        .WithSimpleSchedule(x => x
-            .WithIntervalInMinutes(30)
-            .RepeatForever())
-    );
+    //var jobWorkforceKey = new JobKey("jobWorkforce");
+    //q.AddJob<JobWorkforce>(opts => opts.WithIdentity(jobWorkforceKey));
+    //q.AddTrigger(opts => opts
+    //    .ForJob(jobWorkforceKey)
+    //    .WithIdentity("jobWorkforce-trigger")
+    //    .WithCronSchedule("0 5 9 * * ?")
+    //);
 
 });
 
