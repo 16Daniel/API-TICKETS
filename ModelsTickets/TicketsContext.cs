@@ -32,8 +32,11 @@ namespace TICKETSAPI.ModelsTickets
         public virtual DbSet<ControlAceite> ControlAceites { get; set; } = null!;
         public virtual DbSet<ControlAceitePrueba> ControlAceitePruebas { get; set; } = null!;
         public virtual DbSet<ControlTrampaAceite> ControlTrampaAceites { get; set; } = null!;
+        public virtual DbSet<DatastreamsSucursale> DatastreamsSucursales { get; set; } = null!;
         public virtual DbSet<DiccionarioDelivery> DiccionarioDeliveries { get; set; } = null!;
         public virtual DbSet<LogDiccionarioDelivery> LogDiccionarioDeliveries { get; set; } = null!;
+        public virtual DbSet<LogPoleoWorkforce> LogPoleoWorkforces { get; set; } = null!;
+        public virtual DbSet<NotificacionesWp> NotificacionesWps { get; set; } = null!;
         public virtual DbSet<PedidosDelivery> PedidosDeliveries { get; set; } = null!;
         public virtual DbSet<PreciosAyc> PreciosAycs { get; set; } = null!;
         public virtual DbSet<Simplex> Simplices { get; set; } = null!;
@@ -348,6 +351,19 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Status).HasColumnName("status");
             });
 
+            modelBuilder.Entity<DatastreamsSucursale>(entity =>
+            {
+                entity.ToTable("DATASTREAMS_SUCURSALES");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.IdDatastream).HasColumnName("ID_DATASTREAM");
+
+                entity.Property(e => e.Idf).HasColumnName("IDF");
+
+                entity.Property(e => e.Tipo).HasColumnName("TIPO");
+            });
+
             modelBuilder.Entity<DiccionarioDelivery>(entity =>
             {
                 entity.ToTable("DICCIONARIO_DELIVERY");
@@ -405,6 +421,57 @@ namespace TICKETSAPI.ModelsTickets
                 entity.Property(e => e.Sucursal)
                     .HasMaxLength(250)
                     .HasColumnName("SUCURSAL");
+            });
+
+            modelBuilder.Entity<LogPoleoWorkforce>(entity =>
+            {
+                entity.ToTable("LOG_POLEO_WORKFORCE");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Enviado).HasColumnName("ENVIADO");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Iddatastream).HasColumnName("IDDATASTREAM");
+
+                entity.Property(e => e.Idf).HasColumnName("IDF");
+
+                entity.Property(e => e.Msg).HasColumnName("MSG");
+
+                entity.Property(e => e.Stat)
+                    .HasMaxLength(50)
+                    .HasColumnName("STAT");
+
+                entity.Property(e => e.Time).HasColumnName("TIME");
+
+                entity.Property(e => e.Type)
+                    .HasMaxLength(50)
+                    .HasColumnName("TYPE");
+            });
+
+            modelBuilder.Entity<NotificacionesWp>(entity =>
+            {
+                entity.ToTable("NOTIFICACIONES_WP");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Fecha)
+                    .HasColumnType("datetime")
+                    .HasColumnName("FECHA");
+
+                entity.Property(e => e.Idticket)
+                    .HasMaxLength(10)
+                    .HasColumnName("IDTICKET")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Nivel).HasColumnName("NIVEL");
+
+                entity.Property(e => e.TipoNotificacion)
+                    .HasMaxLength(50)
+                    .HasColumnName("TIPO_NOTIFICACION");
             });
 
             modelBuilder.Entity<PedidosDelivery>(entity =>

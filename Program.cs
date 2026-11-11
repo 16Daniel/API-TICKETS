@@ -8,13 +8,18 @@ using TICKETSAPI.Funciones;
 using TICKETSAPI.ModelsTickets;
 using TICKETSAPI.Jobs;
 using TICKETSAPI.ModelsBD2Prueba;
+using TICKETSAPI.Repositories;
 using Microsoft.OpenApi.Models;
 using TICKETSAPI.Middlewares;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Firestore;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+builder.Services.AddHttpClient();
 
 var TicketsConnection = builder.Configuration.GetConnectionString("TicketsConnection");
 var RebelWingsConnection = builder.Configuration.GetConnectionString("RebelWingsConnection");
@@ -34,9 +39,43 @@ builder.Services.AddCors(policyBuilder =>
         policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod())
 );
 
+
+// 1. Obtener rutas y credenciales del appsettings.json
+string projectId = builder.Configuration["Firebase:ProjectId"]!;
+string credentialsPath = builder.Configuration["Firebase:CredentialsPath"]!;
+string fullCredentialsPath = Path.Combine(builder.Environment.ContentRootPath, credentialsPath);
+
+GoogleCredential credential = GoogleCredential.FromFile(fullCredentialsPath);
+
+// 2. Inicializar Firebase Admin SDK (Requerido para Cloud Messaging / Notificaciones Push)
+if (FirebaseApp.DefaultInstance == null)
+{
+    FirebaseApp.Create(new AppOptions
+    {
+        Credential = credential,
+        ProjectId = projectId
+    });
+}
+
+// 3. Registrar FirestoreDb (Tu configuración actual reutilizando la credencial)
+builder.Services.AddSingleton(sp =>
+{
+    return new FirestoreDbBuilder
+    {
+        ProjectId = projectId,
+        Credential = credential
+    }.Build();
+});
+
+// 4. (Opcional recomendado) Registrar FirebaseMessaging para inyectarlo en Controllers o Jobs
+builder.Services.AddSingleton(sp => FirebaseMessaging.DefaultInstance);
+
+
 builder.Services.AddScoped<FuncionesNomina>();
 builder.Services.AddScoped<FuncionesInventario>();
 builder.Services.AddScoped<MailC>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IWorkforceRepository, WorkforceRepository>();
 
 //Configurar Quartz
 builder.Services.AddQuartz(q =>
@@ -58,6 +97,29 @@ builder.Services.AddQuartz(q =>
         .WithIdentity("faltaspersonalJob-trigger")
         .WithCronSchedule("0 0 8 ? * WED *")
     );
+
+
+    //// Define la clave única para la tarea
+    //var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
+
+    //q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
+
+    //q.AddTrigger(opts => opts
+    //    .ForJob(jobnotificacionesKey)
+    //    .WithIdentity("RevisarTicketsVencidosTrigger")
+    //    .StartNow() // <--- Ejecuta el job inmediatamente al iniciar la aplicación
+    //    .WithSimpleSchedule(x => x
+    //        .WithIntervalInMinutes(60)
+    //        .RepeatForever()) // Repetición continua cada 60 minutos
+    //);
+
+    //var jobWorkforceKey = new JobKey("jobWorkforce");
+    //q.AddJob<JobWorkforce>(opts => opts.WithIdentity(jobWorkforceKey));
+    //q.AddTrigger(opts => opts
+    //    .ForJob(jobWorkforceKey)
+    //    .WithIdentity("jobWorkforce-trigger")
+    //    .WithCronSchedule("0 5 9 * * ?")
+    //);
 
 });
 
