@@ -99,7 +99,7 @@ builder.Services.AddQuartz(q =>
     );
 
 
-    //// Define la clave única para la tarea
+    // Define la clave única para la tarea
     //var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
 
     //q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
@@ -107,19 +107,16 @@ builder.Services.AddQuartz(q =>
     //q.AddTrigger(opts => opts
     //    .ForJob(jobnotificacionesKey)
     //    .WithIdentity("RevisarTicketsVencidosTrigger")
-    //    .StartNow() // <--- Ejecuta el job inmediatamente al iniciar la aplicación
-    //    .WithSimpleSchedule(x => x
-    //        .WithIntervalInMinutes(60)
-    //        .RepeatForever()) // Repetición continua cada 60 minutos
+    //    .WithCronSchedule("0 33 13 * * ?")
     //);
 
-    //var jobWorkforceKey = new JobKey("jobWorkforce");
-    //q.AddJob<JobWorkforce>(opts => opts.WithIdentity(jobWorkforceKey));
-    //q.AddTrigger(opts => opts
-    //    .ForJob(jobWorkforceKey)
-    //    .WithIdentity("jobWorkforce-trigger")
-    //    .WithCronSchedule("0 5 9 * * ?")
-    //);
+    var jobWorkforceKey = new JobKey("jobWorkforce");
+    q.AddJob<JobWorkforce>(opts => opts.WithIdentity(jobWorkforceKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobWorkforceKey)
+        .WithIdentity("jobWorkforce-trigger")
+        .WithCronSchedule("0 0 3/1 * * ?")
+    );
 
 });
 

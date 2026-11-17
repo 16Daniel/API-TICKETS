@@ -1,5 +1,6 @@
 using System.Data;
 using System.Net.Http.Headers;
+using DashboardApi.ModelsBD2;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TICKETSAPI.ModelsTickets;
@@ -9,23 +10,43 @@ namespace TICKETSAPI.Repositories
     public class WorkforceRepository : IWorkforceRepository
     {
         private const string WorkforceDatastreamEndpoint = "https://my.workforce.com/api/v2/storestats/for_datastream";
+        //private const string WorkforceDatastreamEndpoint = "https://staging.workforce.com/api/v2/storestats/for_datastream";
 
         private readonly TicketsContext _ticketsContext;
+        private readonly BD2Context _BD2context;
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
+        private readonly SemaphoreSlim _rateLimitLock = new(1, 1);
+        private readonly Queue<DateTime> _requestTimestamps = new();
+
+        private static readonly TimeSpan RateLimitWindow = TimeSpan.FromMinutes(1);
+        private const int MaxRequestsPerWindow = 200;
 
         public WorkforceRepository(
             TicketsContext ticketsContext,
+            BD2Context BD2context,
             HttpClient httpClient,
             IConfiguration configuration)
         {
             _ticketsContext = ticketsContext;
             _httpClient = httpClient;
             _configuration = configuration;
+            _BD2context = BD2context;
         }
 
         public async Task ProcesarAsync(DateTime fecha, CancellationToken cancellationToken = default)
         {
+            if (fecha.Date >= DateTime.Now.Date.AddDays(-1).Date) 
+            {
+                var existeCola = await _BD2context.RemControlreplicacions
+                 .AnyAsync(x => x.Transcola >= 10, cancellationToken);
+
+                if (existeCola)
+                {
+                    return;
+                }
+            }
+
             fecha = fecha.Date;
 
             var datastreams = await ObtenerDatastreamsSucursalesAsync(cancellationToken);
@@ -63,7 +84,7 @@ namespace TICKETSAPI.Repositories
                             log.Idf == idf &&
                             log.Time == timeBloque &&
                             log.Enviado &&
-                            log.Fecha.Date == DateTime.UtcNow.Date,
+                            log.Fecha.Date == DateTime.Now.Date,
                             cancellationToken);
 
                     if (yaEnviado)
@@ -98,7 +119,7 @@ namespace TICKETSAPI.Repositories
             ICollection<WorkforceDatastreamRequest> solicitudes,
             IReadOnlyCollection<DatastreamsSucursale> datastreamsSucursal,
             int tipo,
-            decimal stat,
+            double stat,
             long time,
             string type)
         {
@@ -190,8 +211,8 @@ namespace TICKETSAPI.Repositories
 
                 return new VentasDatastreamResult
                 {
-                    VentaSalon = reader.IsDBNull(0) ? 0 : reader.GetInt32(0),
-                    VentaDelivery = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
+                    VentaSalon = reader.IsDBNull(0) ? 0 : reader.GetDouble(0),
+                    VentaDelivery = reader.IsDBNull(1) ? 0 : reader.GetDouble(1),
                     AlimentosSalon = reader.IsDBNull(2) ? 0 : reader.GetInt32(2),
                     BebidasSalon = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
                     AlimentosDelivery = reader.IsDBNull(4) ? 0 : reader.GetInt32(4),
@@ -235,33 +256,85 @@ namespace TICKETSAPI.Repositories
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             request.Content = JsonContent.Create(new { stats = datastreams });
 
+            await EsperarDisponibilidadRateLimitAsync(cancellationToken);
             using HttpResponseMessage response = await _httpClient.SendAsync(request, cancellationToken);
             string responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
             foreach (var datastream in datastreams)
-            {
-                _ticketsContext.LogPoleoWorkforces.Add(new LogPoleoWorkforce
+            {   
+                var reglog = _ticketsContext.LogPoleoWorkforces
+                    .FirstOrDefault(log =>
+                        log.Idf == idf &&
+                        log.Time == datastream.Time &&
+                        log.Fecha.Date == DateTime.Now.Date &&
+                        log.Iddatastream == datastream.DatastreamId
+                        );
+                if (reglog == null)
                 {
-                    Idf = idf,
-                    Iddatastream = datastream.DatastreamId,
-                    Fecha = DateTime.UtcNow,
-                    Enviado = response.IsSuccessStatusCode,
-                    Msg = responseContent,
-                    Time = datastream.Time,
-                    Stat = datastream.Stat.ToString(),
-                    Type = datastream.Type
-                });
+                    _ticketsContext.LogPoleoWorkforces.Add(new LogPoleoWorkforce
+                    {
+                        Idf = idf,
+                        Iddatastream = datastream.DatastreamId,
+                        Fecha = DateTime.Now,
+                        Enviado = response.IsSuccessStatusCode,
+                        Msg = responseContent,
+                        Time = datastream.Time,
+                        Stat = datastream.Stat.ToString(),
+                        Type = datastream.Type
+                    });
+                }
+                else 
+                {
+                    reglog.Enviado = response.IsSuccessStatusCode;
+                    reglog.Msg = responseContent;
+                    reglog.Fecha = DateTime.Now;
+                    _ticketsContext.LogPoleoWorkforces.Update(reglog);
+                }
+               
             }
 
             await _ticketsContext.SaveChangesAsync(cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new HttpRequestException(
-                    $"Error al enviar datastream a Workforce. HTTP {(int)response.StatusCode}: {responseContent}");
-            }
-
             return responseContent;
+        }
+
+        private async Task EsperarDisponibilidadRateLimitAsync(
+            CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                TimeSpan espera;
+
+                await _rateLimitLock.WaitAsync(cancellationToken);
+                try
+                {
+                    DateTime ahora = DateTime.UtcNow;
+                    DateTime limiteVentana = ahora - RateLimitWindow;
+
+                    while (_requestTimestamps.Count > 0 &&
+                           _requestTimestamps.Peek() <= limiteVentana)
+                    {
+                        _requestTimestamps.Dequeue();
+                    }
+
+                    if (_requestTimestamps.Count < MaxRequestsPerWindow)
+                    {
+                        _requestTimestamps.Enqueue(ahora);
+                        return;
+                    }
+
+                    espera = _requestTimestamps.Peek() + RateLimitWindow - ahora;
+                }
+                finally
+                {
+                    _rateLimitLock.Release();
+                }
+
+                if (espera > TimeSpan.Zero)
+                {
+                    await Task.Delay(espera, cancellationToken);
+                }
+            }
         }
     }
 }

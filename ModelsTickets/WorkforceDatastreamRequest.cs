@@ -11,7 +11,7 @@ namespace TICKETSAPI.ModelsTickets
         public long Time { get; set; }
 
         [JsonPropertyName("stat")]
-        public decimal Stat { get; set; }
+        public double Stat { get; set; }
 
         [JsonPropertyName("type")]
         public string Type { get; set; } = string.Empty;
