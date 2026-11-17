@@ -16,27 +16,43 @@ namespace TICKETSAPI.Controllers
 
         [HttpPost("procesar")]
         public async Task<IActionResult> Procesar(
-            [FromQuery] DateTime? fecha,
+            [FromQuery] DateTime? fechaInicio,
+            [FromQuery] DateTime? fechaFinal,
             CancellationToken cancellationToken)
         {
-            if (!fecha.HasValue)
+            if (!fechaInicio.HasValue || !fechaFinal.HasValue)
             {
                 return BadRequest(new
                 {
-                    mensaje = "El parámetro fecha es obligatorio. Formato esperado: yyyy-MM-dd."
+                    mensaje = "Los parámetros fechaInicio y fechaFinal son obligatorios. Formato esperado: yyyy-MM-dd."
+                });
+            }
+
+            var inicio = fechaInicio.Value.Date;
+            var final = fechaFinal.Value.Date;
+
+            if (inicio > final)
+            {
+                return BadRequest(new
+                {
+                    mensaje = "La fechaInicio no puede ser posterior a la fechaFinal."
                 });
             }
 
             try
             {
-                await _workforceRepository.ProcesarAsync(
-                    fecha.Value.Date,
-                    cancellationToken);
+                for (var fecha = inicio; fecha <= final; fecha = fecha.AddDays(1))
+                {
+                    await _workforceRepository.ProcesarAsync(
+                        fecha,
+                        cancellationToken);
+                }
 
                 return Ok(new
                 {
-                    mensaje = "El proceso Workforce se ejecutó correctamente.",
-                    fecha = fecha.Value.Date.ToString("yyyy-MM-dd")
+                    mensaje = "El proceso Workforce se ejecutó correctamente para el rango indicado.",
+                    fechaInicio = inicio.ToString("yyyy-MM-dd"),
+                    fechaFinal = final.ToString("yyyy-MM-dd")
                 });
             }
             catch (OperationCanceledException)

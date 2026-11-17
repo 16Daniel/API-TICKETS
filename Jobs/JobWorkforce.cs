@@ -15,7 +15,14 @@ namespace TICKETSAPI.Jobs
         public async Task Execute(IJobExecutionContext context)
         {
             DateTime fecha = DateTime.Today.AddDays(-1).Date;
-            await _workforceRepository.ProcesarAsync(fecha, context.CancellationToken);
+            try 
+            {
+                await _workforceRepository.ProcesarAsync(fecha, context.CancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al ejecutar el JobWorkforce: {ex.Message}");
+            }
         }
     }
 }
