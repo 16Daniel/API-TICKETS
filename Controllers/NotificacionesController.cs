@@ -34,12 +34,12 @@ namespace TICKETSAPI.Controllers
             });
         }
     }
-        public class PushNotificationRequest
+
+    public class PushNotificationRequest
     {
         public string Titulo { get; set; } = string.Empty;
         public string Mensaje { get; set; } = string.Empty;
-        public List<string> tokens { get; set; }
-        public List<string> usuarios { get; set; }
+        public List<string> tokens { get; set; } = new();
+        public List<string> usuarios { get; set; } = new();
     }
-
 }
