@@ -48,8 +48,7 @@
                 // Consulta en Firestore: fechaLimite < UtcNow, no notificados y aún no resueltos
                 Google.Cloud.Firestore.Query query = ticketsRef
                  //.WhereGreaterThan("fechaEstimacion", DateTime.Now)
-                 .WhereNotIn("idEstatusTicket", new[] {"3"})
-                 .WhereEqualTo("idArea","1"); 
+                 .WhereNotIn("idEstatusTicket", new[] { "3" });
 
                 QuerySnapshot snapshot = await query.GetSnapshotAsync(context.CancellationToken);
 
