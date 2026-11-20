@@ -105,6 +105,12 @@
                         idSucursal = string.Empty;
                     }
 
+
+                    if (!document.TryGetValue<string>("folio", out string folio))
+                    {
+                        folio = string.Empty;
+                    }
+
                     if (idresponsable != "") { involucrados.Add(idresponsable); }
 
                     var organigrama = await ObtenerOrganigramaPorAreaAsync(idArea, context.CancellationToken);
@@ -155,7 +161,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(folio,ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                                 var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
                                 if (!string.IsNullOrWhiteSpace(grupo))
@@ -187,7 +193,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                             }
                             continue;
@@ -214,7 +220,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                                 var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
                                 if (!string.IsNullOrWhiteSpace(grupo))
@@ -245,7 +251,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                             }
                             continue;
@@ -267,7 +273,7 @@
             return diferencia.TotalHours;
         }
 
-        private async Task DispararNotificacionAsync(string ticketId, List<string> tokensFCM, string idSucursal, string idAlerta, List<string> usuarios, CancellationToken ct)
+        private async Task DispararNotificacionAsync(string folio,string ticketId, List<string> tokensFCM, string idSucursal, string idAlerta, List<string> usuarios, CancellationToken ct)
         {
             var sucursal = await ObtenerDocumentoAsync(_firestoreDb, "cat_sucursales", idSucursal, ct);
             var nombreSucursal = ObtenerTexto(sucursal, "nombre", idSucursal ?? "Sin sucursal");
@@ -276,7 +282,7 @@
             {
                 tokens = tokensFCM,
                 Titulo = nombre,
-                Mensaje = "Sucursal: " + nombreSucursal,
+                Mensaje = folio+ "\n" + nombreSucursal,
                 usuarios = usuarios
             };
 
