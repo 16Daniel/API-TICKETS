@@ -107,7 +107,9 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(jobnotificacionesKey)
         .WithIdentity("RevisarTicketsVencidosTrigger")
-        .WithCronSchedule("0 33 13 * * ?")
+         .WithSimpleSchedule(x => x
+            .WithIntervalInMinutes(5)
+            .RepeatForever())
     );
 
     var jobWorkforceKey = new JobKey("jobWorkforce");
