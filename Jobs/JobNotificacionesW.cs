@@ -48,7 +48,8 @@
                 // Consulta en Firestore: fechaLimite < UtcNow, no notificados y aún no resueltos
                 Google.Cloud.Firestore.Query query = ticketsRef
                  //.WhereGreaterThan("fechaEstimacion", DateTime.Now)
-                 .WhereNotIn("idEstatusTicket", new[] {"3"});
+                 .WhereNotIn("idEstatusTicket", new[] {"3"})
+                 .WhereEqualTo("idArea","1"); 
 
                 QuerySnapshot snapshot = await query.GetSnapshotAsync(context.CancellationToken);
 
@@ -58,7 +59,7 @@
                 {
                     var ticket = document.ToDictionary();
                     string ticketId = document.Id;
-                    
+
                     if (!document.TryGetValue<string>("idEstatusTicket", out string statusTicket))
                     {
                         statusTicket = string.Empty;
@@ -94,7 +95,36 @@
                         involucrados = new List<string>();
                     }
 
+                    if (!document.TryGetValue<string>("idArea", out string idArea))
+                    {
+                        idArea = string.Empty;
+                    }
+
+                    if (!document.TryGetValue<string>("idSucursal", out string idSucursal))
+                    {
+                        idSucursal = string.Empty;
+                    }
+
                     if (idresponsable != "") { involucrados.Add(idresponsable); }
+
+                    var organigrama = await ObtenerOrganigramaPorAreaAsync(idArea, context.CancellationToken);
+                    string idRespdireccion = "";
+                    string idRespgerente = "";
+
+                    if (organigrama?.Raiz?.Children != null && organigrama.Raiz.Children.Count > 0)
+                    {
+                        OrganigramaNodo direccion = organigrama.Raiz;
+                        idRespdireccion = direccion.PersonaId ?? "";
+
+                        if (direccion.Children != null && direccion.Children.Count > 0)
+                        {
+                            OrganigramaNodo gerente = direccion.Children[0];
+                            idRespgerente = gerente.PersonaId ?? "";
+                        }
+                    }
+
+                    string iddireccion = await ObtenerIdUsuarioPorIdResponsableAsync(idRespdireccion, context.CancellationToken);
+                    string idgerente = await ObtenerIdUsuarioPorIdResponsableAsync(idRespgerente, context.CancellationToken);
 
                     var notificacion = new HistorialNotificacion
                     {
@@ -113,6 +143,9 @@
                             Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
                             if (nuevanotificacion)
                             {
+                                if(idgerente != "") { involucrados.Add(idgerente); }
+                                notificacion.usuarios = involucrados.Distinct().ToList();
+                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
                                 await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
                                 List<string> tokens = new List<string>();
                                 foreach (string item in involucrados)
@@ -122,7 +155,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, "Nueva alerta en el ticket", notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                                 var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
                                 if (!string.IsNullOrWhiteSpace(grupo))
@@ -140,6 +173,11 @@
                             Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
                             if (nuevanotificacion)
                             {
+                               
+                                if (idgerente != "") { involucrados.Add(idgerente); }
+                                if(iddireccion != "") { involucrados.Add(iddireccion); }
+                                notificacion.usuarios = involucrados.Distinct().ToList();
+                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
                                 await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
                                 List<string> tokens = new List<string>();
                                 foreach (string item in involucrados)
@@ -149,7 +187,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, "Nueva alerta en el ticket", notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                             }
                             continue;
@@ -164,6 +202,9 @@
                             Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
                             if (nuevanotificacion)
                             {
+                                if (idgerente != "") { involucrados.Add(idgerente); }
+                                notificacion.usuarios = involucrados.Distinct().ToList();
+                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
                                 await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
                                 List<string> tokens = new List<string>();
                                 foreach (string item in involucrados)
@@ -173,7 +214,7 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, "Nueva alerta en el ticket", notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                                 var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
                                 if (!string.IsNullOrWhiteSpace(grupo))
@@ -191,6 +232,10 @@
                             Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
                             if (nuevanotificacion)
                             {
+                                if (idgerente != "") { involucrados.Add(idgerente); }
+                                if (iddireccion != "") { involucrados.Add(iddireccion); }
+                                notificacion.usuarios = involucrados.Distinct().ToList();
+                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
                                 await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
                                 List<string> tokens = new List<string>();
                                 foreach (string item in involucrados)
@@ -200,13 +245,13 @@
                                 }
                                 if (tokens.Count > 0)
                                 {
-                                    await DispararNotificacionAsync(ticketId, tokens, "Nueva alerta en el ticket", notificacion.idAlerta, involucrados, context.CancellationToken);
+                                    await DispararNotificacionAsync(ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
                                 }
                             }
                             continue;
                         }
                     }
-           
+
                 }
             }
             catch (Exception ex)
@@ -222,18 +267,49 @@
             return diferencia.TotalHours;
         }
 
-        private async Task DispararNotificacionAsync(string ticketId, List<string> tokensFCM, string mensaje, string idAlerta,List<string>usuarios, CancellationToken ct)
+        private async Task DispararNotificacionAsync(string ticketId, List<string> tokensFCM, string idSucursal, string idAlerta, List<string> usuarios, CancellationToken ct)
         {
+            var sucursal = await ObtenerDocumentoAsync(_firestoreDb, "cat_sucursales", idSucursal, ct);
+            var nombreSucursal = ObtenerTexto(sucursal, "nombre", idSucursal ?? "Sin sucursal");
+            string nombre = await ObtenerNombreAlertaPorIdAsync(idAlerta, ct);
             var request = new PushNotificationRequest
             {
                 tokens = tokensFCM,
-                Titulo = "",
-                Mensaje = mensaje,
+                Titulo = nombre,
+                Mensaje = "Sucursal: " + nombreSucursal,
                 usuarios = usuarios
             };
-            string nombre = await ObtenerNombreAlertaPorIdAsync(idAlerta); 
-            request.Titulo = nombre;
+
             var resultado = await _notificationService.EnviarPushAsync(request, ct);
+
+            foreach (string token in resultado.TokensInvalidos.Distinct())
+            {
+                QuerySnapshot snapshotUsuarios = await _firestoreDb.Collection("usuarios")
+                    .WhereArrayContains("fcmToken", token)
+                    .GetSnapshotAsync(ct);
+
+                if (snapshotUsuarios.Documents.Count == 0)
+                {
+                    _logger.LogWarning("No se encontró ningún usuario con el token inválido {Token}.", token);
+                    continue;
+                }
+
+                foreach (DocumentSnapshot usuario in snapshotUsuarios.Documents)
+                {
+                    await usuario.Reference.UpdateAsync(
+                        new Dictionary<string, object>
+                        {
+                            ["fcmToken"] = FieldValue.ArrayRemove(token)
+                        },
+                        null,
+                        ct);
+
+                    _logger.LogInformation(
+                        "Token inválido {Token} removido del usuario {UsuarioId}.",
+                        token,
+                        usuario.Id);
+                }
+            }
             _logger.LogInformation("Notificación enviada para Ticket {TicketId}: {Exitos} enviados, {Fallos} fallidos.",
                 ticketId, resultado.Enviados, resultado.Fallidos);
         }
@@ -280,6 +356,84 @@
             {
                 _logger.LogError(ex, "Error al consultar la alerta con ID: {IdAlerta}", idAlerta);
                 return string.Empty;
+            }
+        }
+
+        public async Task<string> ObtenerIdUsuarioPorIdResponsableAsync(
+            string idResponsable,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(idResponsable))
+                return string.Empty;
+
+            try
+            {
+                Google.Cloud.Firestore.Query query = _firestoreDb
+                    .Collection("responsables")
+                    .WhereEqualTo("id", idResponsable)
+                    .Limit(1);
+
+                QuerySnapshot snapshot = await query.GetSnapshotAsync(cancellationToken);
+
+                if (snapshot.Documents.Count == 0)
+                {
+                    _logger.LogWarning(
+                        "No se encontró el responsable con ID: {IdResponsable}",
+                        idResponsable);
+                    return string.Empty;
+                }
+
+                DocumentSnapshot responsable = snapshot.Documents[0];
+
+                if (responsable.TryGetValue<string>("idUsuario", out string idUsuario) &&
+                    !string.IsNullOrWhiteSpace(idUsuario))
+                {
+                    return idUsuario;
+                }
+
+                _logger.LogWarning(
+                    "El responsable {IdResponsable} no contiene idUsuario",
+                    idResponsable);
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al obtener el idUsuario del responsable {IdResponsable}",
+                    idResponsable);
+                return string.Empty;
+            }
+        }
+
+        public async Task<AreaOrganigrama?> ObtenerOrganigramaPorAreaAsync(
+            string areaId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(areaId))
+                return null;
+
+            try
+            {
+                Google.Cloud.Firestore.Query query = _firestoreDb
+                    .Collection("areas_organigrama")
+                    .WhereEqualTo("areaId", areaId)
+                    .Limit(1);
+
+                QuerySnapshot snapshot = await query.GetSnapshotAsync(cancellationToken);
+
+                if (snapshot.Documents.Count == 0)
+                {
+                    _logger.LogWarning("No se encontró el organigrama del área {AreaId}", areaId);
+                    return null;
+                }
+
+                return snapshot.Documents[0].ConvertTo<AreaOrganigrama>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al consultar el organigrama del área {AreaId}", areaId);
+                return null;
             }
         }
 
@@ -482,53 +636,6 @@
             return WebUtility.HtmlDecode(texto).Trim();
         }
 
-        private async Task AsegurarCatalogoAlertasExisteAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                CollectionReference catAlertasRef = _firestoreDb.Collection("cat_alertas");
-                QuerySnapshot snapshot = await catAlertasRef.Limit(1).GetSnapshotAsync(cancellationToken);
-
-                // Si ya existen registros, no se realiza ninguna acción
-                if (snapshot.Documents.Count > 0)
-                {
-                    return;
-                }
-
-                _logger.LogInformation("La colección 'cat_alertas' no existe o está vacía. Poblando catálogo inicial...");
-
-                var catalogoInicial = new List<CategoriaAlerta>
-        {
-            new CategoriaAlerta { Id = "1", Categoria = "UR", Nombre = "NUEVO TICKET DE URGENCIA" },
-            new CategoriaAlerta { Id = "2", Categoria = "TA", Nombre = "TICKET SIN ATENCION DEL AREA" },
-            new CategoriaAlerta { Id = "3", Categoria = "TA", Nombre = "TICKET SIN ATENCION DE COORDINADOR" },
-            new CategoriaAlerta { Id = "4", Categoria = "TA", Nombre = "TICKET SIN ATENCION TOTAL" },
-            new CategoriaAlerta { Id = "5", Categoria = "TR", Nombre = "SLA SIN RESOLVER" },
-            new CategoriaAlerta { Id = "6", Categoria = "TR", Nombre = "SLA VENCIDO TOTAL" },
-            new CategoriaAlerta { Id = "7", Categoria = "RR", Nombre = "4 INCIDENCIAS SEGUIDAS" },
-            new CategoriaAlerta { Id = "8", Categoria = "MT", Nombre = "NUEVO TICKET EN MITIGACION" },
-            new CategoriaAlerta { Id = "9", Categoria = "CM", Nombre = "NUEVO TICKET DE COMITE" }
-        };
-
-                // Uso de Batch Write para insertar de forma atómica y eficiente
-                WriteBatch batch = _firestoreDb.StartBatch();
-
-                foreach (var item in catalogoInicial)
-                {
-                    // Usamos el ID de la alerta como ID del documento en Firestore
-                    DocumentReference docRef = catAlertasRef.Document(item.Id);
-                    batch.Set(docRef, item);
-                }
-
-                await batch.CommitAsync(cancellationToken);
-                _logger.LogInformation("Catálogo 'cat_alertas' creado exitosamente con {Count} registros.", catalogoInicial.Count);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al verificar o poblar el catálogo 'cat_alertas'.");
-            }
-        }
-
         public async Task SendWhatsAppMessageAsync(
     WhatsAppRequestDto dto,
     CancellationToken cancellationToken = default)
@@ -601,5 +708,37 @@
 
         [FirestoreProperty("nombre")]
         public string Nombre { get; set; } = string.Empty;
+    }
+
+    [FirestoreData]
+    public class AreaOrganigrama
+    {
+        [FirestoreProperty("areaId")]
+        public string AreaId { get; set; } = string.Empty;
+
+        [FirestoreProperty("raiz")]
+        public OrganigramaNodo? Raiz { get; set; }
+    }
+
+    [FirestoreData]
+    public class OrganigramaNodo
+    {
+        [FirestoreProperty("key")]
+        public string Key { get; set; } = string.Empty;
+
+        [FirestoreProperty("id")]
+        public int Id { get; set; }
+
+        [FirestoreProperty("nombre")]
+        public string Nombre { get; set; } = string.Empty;
+
+        [FirestoreProperty("personaId")]
+        public string PersonaId { get; set; } = string.Empty;
+
+        [FirestoreProperty("nombreResponsable")]
+        public string NombreResponsable { get; set; } = string.Empty;
+
+        [FirestoreProperty("children")]
+        public List<OrganigramaNodo> Children { get; set; } = new List<OrganigramaNodo>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FirebaseAdmin.Messaging;
+using System.Text.Json;
 using TICKETSAPI.Controllers;
 
 namespace TICKETSAPI.Funciones
@@ -54,12 +55,13 @@ namespace TICKETSAPI.Funciones
             {
                 var message = new MulticastMessage
                 {
-                    Notification = new Notification
+                    Tokens = batch.ToList(),
+                    Data = new Dictionary<string, string>
                     {
-                        Title = request.Titulo,
-                        Body = request.Mensaje
-                    },
-                    Tokens = batch.ToList()
+                        ["usuarios"] = JsonSerializer.Serialize(request.usuarios ?? new List<string>()),
+                        ["title"] = request.Titulo,
+                        ["body"] = request.Mensaje
+                    }
                 };
 
                 BatchResponse batchResponse = await _messaging.SendEachForMulticastAsync(message, cancellationToken);
