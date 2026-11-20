@@ -100,15 +100,15 @@ builder.Services.AddQuartz(q =>
 
 
     // Define la clave única para la tarea
-    //var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
+    var jobnotificacionesKey = new JobKey("RevisarTicketsVencidosJob");
 
-    //q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
+    q.AddJob<RevisarTicketsVencidosJob>(opts => opts.WithIdentity(jobnotificacionesKey));
 
-    //q.AddTrigger(opts => opts
-    //    .ForJob(jobnotificacionesKey)
-    //    .WithIdentity("RevisarTicketsVencidosTrigger")
-    //    .WithCronSchedule("0 33 13 * * ?")
-    //);
+    q.AddTrigger(opts => opts
+        .ForJob(jobnotificacionesKey)
+        .WithIdentity("RevisarTicketsVencidosTrigger")
+        .WithCronSchedule("0 33 13 * * ?")
+    );
 
     var jobWorkforceKey = new JobKey("jobWorkforce");
     q.AddJob<JobWorkforce>(opts => opts.WithIdentity(jobWorkforceKey));
