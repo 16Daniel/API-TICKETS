@@ -41,13 +41,10 @@
 
             try
             {
-                //await AsegurarCatalogoAlertasExisteAsync(context.CancellationToken); 
-
+             
                 CollectionReference ticketsRef = _firestoreDb.Collection("tickets");
-
-                // Consulta en Firestore: fechaLimite < UtcNow, no notificados y aún no resueltos
                 Google.Cloud.Firestore.Query query = ticketsRef
-                 //.WhereGreaterThan("fechaEstimacion", DateTime.Now)
+                  //  .WhereEqualTo("idArea", "1")
                  .WhereNotIn("idEstatusTicket", new[] { "3" });
 
                 QuerySnapshot snapshot = await query.GetSnapshotAsync(context.CancellationToken);
@@ -131,131 +128,106 @@
                     string iddireccion = await ObtenerIdUsuarioPorIdResponsableAsync(idRespdireccion, context.CancellationToken);
                     string idgerente = await ObtenerIdUsuarioPorIdResponsableAsync(idRespgerente, context.CancellationToken);
 
-                    var notificacion = new HistorialNotificacion
-                    {
-                        ticketId = ticketId,
-                        fecha = DateTime.UtcNow,
-                        idAlerta = "",
-                        usuarios = involucrados,
-                        lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false)
-                    };
+                    string idAlerta;
+                    var usuariosAlerta = involucrados.Distinct().ToList();
 
-                    if (statusTicket == "1")
-                    {
-                        if (ObtenerHorasTranscurridas(fechacreacion) < 24 && ObtenerHorasTranscurridas(fechacreacion) > horasAtencion)
-                        {
-                            notificacion.idAlerta = "2";
-                            Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
-                            if (nuevanotificacion)
-                            {
-                                if(idgerente != "") { involucrados.Add(idgerente); }
-                                notificacion.usuarios = involucrados.Distinct().ToList();
-                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
-                                await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
-                                List<string> tokens = new List<string>();
-                                foreach (string item in involucrados)
-                                {
-                                    var tokensUsuario = await ObtenerTokensUsuarioAsync(item, context.CancellationToken);
-                                    tokens.AddRange(tokensUsuario);
-                                }
-                                if (tokens.Count > 0)
-                                {
-                                    await DispararNotificacionAsync(folio,ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
-                                }
-                                var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
-                                if (!string.IsNullOrWhiteSpace(grupo))
-                                {
-                                    string mensaje = await GenerarMensajeWAsync(_firestoreDb, ticketId, true);
-                                    await SendWhatsAppMessageAsync(new WhatsAppRequestDto() { ToNumber = grupo, Message = mensaje });
-                                }
-                            }
-                            continue;
-                        }
+                    double horasTranscurridasCreacion = ObtenerHorasTranscurridas(fechacreacion);
+                    double horasTranscurridasAtencion = ObtenerHorasTranscurridas(fechaAtencion);
 
-                        if (ObtenerHorasTranscurridas(fechacreacion) > 24)
-                        {
-                            notificacion.idAlerta = "4";
-                            Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
-                            if (nuevanotificacion)
-                            {
-                               
-                                if (idgerente != "") { involucrados.Add(idgerente); }
-                                if(iddireccion != "") { involucrados.Add(iddireccion); }
-                                notificacion.usuarios = involucrados.Distinct().ToList();
-                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
-                                await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
-                                List<string> tokens = new List<string>();
-                                foreach (string item in involucrados)
-                                {
-                                    var tokensUsuario = await ObtenerTokensUsuarioAsync(item, context.CancellationToken);
-                                    tokens.AddRange(tokensUsuario);
-                                }
-                                if (tokens.Count > 0)
-                                {
-                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
-                                }
-                            }
-                            continue;
-                        }
+                    if (statusTicket == "1"
+                        && horasTranscurridasCreacion >= (horasAtencion - 0.25)
+                        && horasTranscurridasCreacion < horasAtencion)
+                    {
+                        idAlerta = "WTA";
+                        usuariosAlerta.Clear();
+                    }
+                    else if (statusTicket == "1"
+                        && horasTranscurridasCreacion < (horasAtencion + 24)
+                        && horasTranscurridasCreacion > horasAtencion)
+                    {
+                        idAlerta = "2";
+                        if (!string.IsNullOrWhiteSpace(idgerente)) usuariosAlerta.Add(idgerente);
+                    }
+                    else if (statusTicket == "1" && horasTranscurridasCreacion > (horasAtencion + 24))
+                    {
+                        idAlerta = "4";
+                        if (!string.IsNullOrWhiteSpace(idgerente)) usuariosAlerta.Add(idgerente);
+                        if (!string.IsNullOrWhiteSpace(iddireccion)) usuariosAlerta.Add(iddireccion);
+                    }
+                    else if (int.TryParse(statusTicket, out int estado)
+                        && estado > 1
+                        && estado != 8
+                        && horasTranscurridasAtencion >= (horasResolucion - 0.25)
+                        && horasTranscurridasAtencion < horasResolucion)
+                    {
+                        idAlerta = "WTR";
+                        usuariosAlerta.Clear();
+                    }
+                    else if (int.TryParse(statusTicket, out estado)
+                        && estado > 1
+                        && estado != 8
+                        && horasTranscurridasAtencion < (horasResolucion + 24)
+                        && horasTranscurridasAtencion > horasResolucion)
+                    {
+                        idAlerta = "5";
+                        if (!string.IsNullOrWhiteSpace(idgerente)) usuariosAlerta.Add(idgerente);
+                    }
+                    else if (int.TryParse(statusTicket, out estado)
+                        && estado > 1
+                        && estado != 8
+                        && horasTranscurridasAtencion > (horasResolucion + 24))
+                    {
+                        idAlerta = "6";
+                        if (!string.IsNullOrWhiteSpace(idgerente)) usuariosAlerta.Add(idgerente);
+                        if (!string.IsNullOrWhiteSpace(iddireccion)) usuariosAlerta.Add(iddireccion);
+                    }
+                    else
+                    {
+                        continue;
                     }
 
-                    if (int.Parse(statusTicket) > 1 && !int.Parse(statusTicket).Equals("8")) 
+                    usuariosAlerta = usuariosAlerta.Distinct().ToList();
+
+                    await _notificationService.ProcesarAlertaAsync(new TicketNotificationRequest
                     {
-                        if (ObtenerHorasTranscurridas(fechaAtencion) < 24 && ObtenerHorasTranscurridas(fechaAtencion) > horasResolucion)
+                        TicketId = ticketId,
+                        Folio = folio,
+                        IdSucursal = idSucursal,
+                        IdAlerta = idAlerta,
+                        Usuarios = usuariosAlerta
+                    }, context.CancellationToken);
+
+                    if (idAlerta is "2" or "5" or "WTA" or "WTR")
+                        if (idAlerta is "WTA" or "WTR")
+                    {
+                        int opcionNotificacion = idAlerta switch
                         {
-                            notificacion.idAlerta = "5";
-                            Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
-                            if (nuevanotificacion)
-                            {
-                                if (idgerente != "") { involucrados.Add(idgerente); }
-                                notificacion.usuarios = involucrados.Distinct().ToList();
-                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
-                                await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
-                                List<string> tokens = new List<string>();
-                                foreach (string item in involucrados)
-                                {
-                                    var tokensUsuario = await ObtenerTokensUsuarioAsync(item, context.CancellationToken);
-                                    tokens.AddRange(tokensUsuario);
-                                }
-                                if (tokens.Count > 0)
-                                {
-                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
-                                }
-                                var grupo = await RevisarTicketsVencidosJob.ObtenerGrupoNotificacionAreaAsync(_firestoreDb, ticketId, true);
-                                if (!string.IsNullOrWhiteSpace(grupo))
-                                {
-                                    string mensaje = await GenerarMensajeWAsync(_firestoreDb, ticketId, false);
-                                    await SendWhatsAppMessageAsync(new WhatsAppRequestDto() { ToNumber = grupo, Message = mensaje });
-                                }
-                            }
-                            continue;
+                            "2" => 1,
+                            "5" => 2,
+                            "WTA" => 3,
+                            "WTR" => 4,
+                            _ => 0
+                        };
+
+                        var grupo = await ObtenerGrupoNotificacionAreaAsync(
+                            _firestoreDb,
+                            ticketId,
+                            opcionNotificacion,
+                            context.CancellationToken);
+
+                        if (!string.IsNullOrWhiteSpace(grupo))
+                        {
+                            string mensaje = await GenerarMensajeWAsync(
+                                _firestoreDb,
+                                ticketId,
+                                opcionNotificacion);
+                            await SendWhatsAppMessageAsync(new WhatsAppRequestDto { ToNumber = grupo, Message = mensaje });
                         }
 
-                        if (ObtenerHorasTranscurridas(fechaAtencion) > 24)
-                        {
-                            notificacion.idAlerta = "6";
-                            Boolean nuevanotificacion = await NoExisteAlertaRegistradaAsync(notificacion.ticketId, notificacion.idAlerta, context.CancellationToken);
-                            if (nuevanotificacion)
-                            {
-                                if (idgerente != "") { involucrados.Add(idgerente); }
-                                if (iddireccion != "") { involucrados.Add(iddireccion); }
-                                notificacion.usuarios = involucrados.Distinct().ToList();
-                                notificacion.lecturas = involucrados.Distinct().ToList().ToDictionary(id => id, _ => false);
-                                await _firestoreDb.Collection("historial_alertas").AddAsync(notificacion);
-                                List<string> tokens = new List<string>();
-                                foreach (string item in involucrados)
-                                {
-                                    var tokensUsuario = await ObtenerTokensUsuarioAsync(item, context.CancellationToken);
-                                    tokens.AddRange(tokensUsuario);
-                                }
-                                if (tokens.Count > 0)
-                                {
-                                    await DispararNotificacionAsync(folio, ticketId, tokens, idSucursal, notificacion.idAlerta, involucrados, context.CancellationToken);
-                                }
-                            }
-                            continue;
-                        }
+
+
                     }
+
 
                 }
             }
@@ -270,98 +242,6 @@
             TimeSpan diferencia = DateTime.UtcNow - fechaInicial;
 
             return diferencia.TotalHours;
-        }
-
-        private async Task DispararNotificacionAsync(string folio,string ticketId, List<string> tokensFCM, string idSucursal, string idAlerta, List<string> usuarios, CancellationToken ct)
-        {
-            var sucursal = await ObtenerDocumentoAsync(_firestoreDb, "cat_sucursales", idSucursal, ct);
-            var nombreSucursal = ObtenerTexto(sucursal, "nombre", idSucursal ?? "Sin sucursal");
-            string nombre = await ObtenerNombreAlertaPorIdAsync(idAlerta, ct);
-            var request = new PushNotificationRequest
-            {
-                tokens = tokensFCM,
-                Titulo = nombre,
-                Mensaje = folio+ "\n" + nombreSucursal,
-                usuarios = usuarios
-            };
-
-            var resultado = await _notificationService.EnviarPushAsync(request, ct);
-
-            foreach (string token in resultado.TokensInvalidos.Distinct())
-            {
-                QuerySnapshot snapshotUsuarios = await _firestoreDb.Collection("usuarios")
-                    .WhereArrayContains("fcmToken", token)
-                    .GetSnapshotAsync(ct);
-
-                if (snapshotUsuarios.Documents.Count == 0)
-                {
-                    _logger.LogWarning("No se encontró ningún usuario con el token inválido {Token}.", token);
-                    continue;
-                }
-
-                foreach (DocumentSnapshot usuario in snapshotUsuarios.Documents)
-                {
-                    await usuario.Reference.UpdateAsync(
-                        new Dictionary<string, object>
-                        {
-                            ["fcmToken"] = FieldValue.ArrayRemove(token)
-                        },
-                        null,
-                        ct);
-
-                    _logger.LogInformation(
-                        "Token inválido {Token} removido del usuario {UsuarioId}.",
-                        token,
-                        usuario.Id);
-                }
-            }
-            _logger.LogInformation("Notificación enviada para Ticket {TicketId}: {Exitos} enviados, {Fallos} fallidos.",
-                ticketId, resultado.Enviados, resultado.Fallidos);
-        }
-
-        public async Task<bool> NoExisteAlertaRegistradaAsync(string ticketId, string idAlerta, CancellationToken cancellationToken = default)
-        {
-            try
-            {
-                CollectionReference historialRef = _firestoreDb.Collection("historial_alertas");
-                Google.Cloud.Firestore.Query query = historialRef
-                    .WhereEqualTo("TicketId", ticketId)
-                    .WhereEqualTo("idAlerta", idAlerta)
-                    .Limit(1);
-
-                QuerySnapshot snapshot = await query.GetSnapshotAsync(cancellationToken);
-                return snapshot.Documents.Count == 0;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al verificar existencia de alerta para TicketId: {TicketId}, idAlerta: {IdAlerta}", ticketId, idAlerta);
-                return false;
-            }
-        }
-
-        public async Task<string> ObtenerNombreAlertaPorIdAsync(string idAlerta, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(idAlerta))
-                return string.Empty;
-
-            try
-            {
-                DocumentReference docRef = _firestoreDb.Collection("cat_alertas").Document(idAlerta);
-                DocumentSnapshot snapshot = await docRef.GetSnapshotAsync(cancellationToken);
-
-                if (snapshot.Exists && snapshot.TryGetValue("nombre", out string nombre))
-                {
-                    return nombre;
-                }
-
-                _logger.LogWarning("No se encontró la alerta con ID: {IdAlerta}", idAlerta);
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al consultar la alerta con ID: {IdAlerta}", idAlerta);
-                return string.Empty;
-            }
         }
 
         public async Task<string> ObtenerIdUsuarioPorIdResponsableAsync(
@@ -442,45 +322,30 @@
             }
         }
 
-        public async Task<List<string>> ObtenerTokensUsuarioAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                throw new ArgumentException("El ID del usuario no puede estar vacío.", nameof(userId));
-            }
-
-            // Referencia directa al documento por su ID dentro de la colección 'usuarios'
-            DocumentReference docRef = _firestoreDb.Collection("usuarios").Document(userId);
-
-            DocumentSnapshot snapshot = await docRef.GetSnapshotAsync(cancellationToken);
-
-            if (!snapshot.Exists)
-            {
-                // El usuario no existe en la colección
-                return new List<string>();
-            }
-
-            // Verifica si el campo existe y es un array/lista
-            if (snapshot.TryGetValue("fcmToken", out List<string> tokens) && tokens != null)
-            {
-                return tokens;
-            }
-
-            // Si la propiedad existe como array de objetos genéricos en Firestore,
-            // también puedes extraerla de forma segura así:
-            if (snapshot.TryGetValue("fcmToken", out List<object> rawList) && rawList != null)
-            {
-                return rawList.ConvertAll(token => token?.ToString() ?? string.Empty);
-            }
-
-            return new List<string>();
-        }
-
         public static async Task<string> GenerarMensajeWAsync(
-       FirestoreDb db,
-       string ticketId,Boolean ta)
+            FirestoreDb db,
+            string ticketId,
+            int opcionNotificacion)
         {
+            ArgumentNullException.ThrowIfNull(db);
+
+            string titulo = opcionNotificacion switch
+            {
+                1 => "🔴 TA: SUPERADO",
+                2 => "🔴 TR: SUPERADO",
+                3 => "🔴 TA: POR VENCER",
+                4 => "🔴 TR: POR VENCER",
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(opcionNotificacion),
+                    "Debe ser 1 (superaTA), 2 (superaTR), 3 (taPorVencer) o 4 (trPorVencer).")
+            };
+
+            if (string.IsNullOrWhiteSpace(ticketId))
+                throw new ArgumentException("El ID del ticket es requerido.", nameof(ticketId));
+
             var ticket = await ObtenerDocumentoAsync(db, "tickets", ticketId);
+
+
 
             if (ticket == null)
                 throw new KeyNotFoundException($"No se encontró el ticket '{ticketId}'.");
@@ -531,7 +396,7 @@
             return string.Join("\n", new[]
             {
             "======================",
-            ta ? "🟠 TA: SUPERADO":"🔴 TR: SUPERADO",
+            titulo,
             "======================",
             $"Area: {nombreArea}",
             $"Sucursal: {nombreSucursal}",
@@ -549,7 +414,7 @@
         public static async Task<string?> ObtenerGrupoNotificacionAreaAsync(
             FirestoreDb db,
             string ticketId,
-            bool ta,
+            int opcionNotificacion,
             CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(db);
@@ -577,7 +442,18 @@
                 return null;
             }
 
-            var opcion = ta ? "superaTA" : "superaTR";
+            var opcion = opcionNotificacion switch
+            {
+                1 => "superaTA",
+                2 => "superaTR",
+                3 => "taPorVencer",
+                4 => "trPorVencer",
+                _ => null
+            };
+
+            if (opcion == null)
+                return null;
+
             return opciones.TryGetValue(opcion, out var valor) &&
                 valor is bool habilitada &&
                 habilitada
@@ -680,25 +556,6 @@
 
             _logger.LogInformation("Mensaje de WhatsApp enviado correctamente a {To}", dto.ToNumber);
         }
-
-    }
-
-    [FirestoreData]
-    public class HistorialNotificacion
-    {
-        [FirestoreProperty]
-        public string ticketId { get; set; }
-
-        [FirestoreProperty]
-        public DateTime fecha { get; set; }
-        
-        [FirestoreProperty]
-        public string idAlerta { get; set; }
-        [FirestoreProperty] 
-        public List<string> usuarios { get; set;}
-
-        [FirestoreProperty]
-        public Dictionary<string, bool> lecturas { get; set; } = new();
 
     }
 
